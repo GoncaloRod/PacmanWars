@@ -105,7 +105,8 @@ namespace PacmanWars
                 for (int x = 0; x < width; x++)
                 {
                     // Wall             'W'
-                    // "Pac-Dot"        'D'
+                    // Empty Space      'E'
+                    // "Pac-Dot"        ' '
                     // "Power Pellet"   'P'
                     // Player 1         '1'
                     // Player 2         '2'
