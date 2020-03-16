@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -8,7 +9,7 @@ namespace PacmanWars
     struct Tile
     {
         public int Type;
-        public Vector2 Position;
+        public Point Position;
     }
 
     public class Board : DrawableGameComponent
@@ -20,6 +21,7 @@ namespace PacmanWars
         private int _width, _heigth;
         private char[,] _matrix;
         private List<Tile> _tiles;
+        private Dictionary<int, Rectangle> _tileSprites;
 
         public Board(Game1 game, int width, int height, char[,] matrix) : base(game)
         {
@@ -31,6 +33,8 @@ namespace PacmanWars
             _heigth = height;
             _matrix = matrix;
 
+            LoadTileData();
+
             GenerateTileList();
         }
 
@@ -40,26 +44,51 @@ namespace PacmanWars
         {
             _batch.Begin();
 
-            // TODO: Change this
-            for (int x = 0; x < _width; x++)
+            foreach (Tile tile in _tiles)
             {
-                for (int y = 0; y < _heigth; y++)
-                {
-                    Rectangle outRectangle = new Rectangle(new Point(x  * Game1.TileSize, y * Game1.TileSize), new Point(Game1.TileSize));
+                Rectangle outRectangle = new Rectangle(new Point(tile.Position.X * Game1.TileSize, tile.Position.Y * Game1.TileSize), new Point(Game1.TileSize));
 
-                    if (_matrix[x, y] == 'W')
-                    {
-                        _batch.Draw(
-                            texture: _spriteSheet,
-                            destinationRectangle: outRectangle,
-                            sourceRectangle: new Rectangle(0, 13 * 16, 16, 16),
-                            color: Color.White
-                        );
-                    }
+                if (_tileSprites.ContainsKey(tile.Type))
+                {
+                    _batch.Draw(
+                        texture: _spriteSheet,
+                        destinationRectangle: outRectangle,
+                        sourceRectangle: _tileSprites[tile.Type],
+                        color: Color.White
+                    );
+                }
+                else
+                {
+                    _batch.Draw(
+                        texture: _spriteSheet,
+                        destinationRectangle: outRectangle,
+                        sourceRectangle: _tileSprites[-1],
+                        color: Color.White
+                    );
                 }
             }
 
             _batch.End();
+        }
+
+        private void LoadTileData()
+        {
+            string[] file = File.ReadAllLines($@"{_game.Content.RootDirectory}\tiles.txt");
+
+            _tileSprites = new Dictionary<int, Rectangle>();
+
+            foreach (string line in file)
+            {
+                if (line != "")
+                {
+                    string[] splitedLine = line.Trim().Split(' ');
+
+                    int key = Convert.ToInt32(splitedLine[2], 2);
+                    Rectangle value = new Rectangle(int.Parse(splitedLine[0]) * 16, int.Parse(splitedLine[1]) * 16, 16, 16);
+
+                    _tileSprites[key] = value;
+                }
+            }
         }
 
         private void GenerateTileList()
@@ -86,7 +115,7 @@ namespace PacmanWars
                     if (_matrix[x, y] == 'W')
                     {
                         // Current position is a wall
-                        Tile tile = new Tile(){ Position = new Vector2(x, y) };
+                        Tile tile = new Tile(){ Position = new Point(x, y) };
 
                         // Go tough the surroundings to find tile type
                         foreach (var (weight, pos) in neighborPositions)
@@ -95,12 +124,12 @@ namespace PacmanWars
                             {
                                 // Neighbor is outside of the board
                                 // We consider it as a wall
-                                tile.Type |= weight;
+                                tile.Type += weight;
                             }
                             else if (_matrix[x + (int)pos.X, y + (int)pos.Y] == 'W')
                             {
                                 // Neighbor is a wall
-                                 tile.Type |= weight;
+                                 tile.Type += weight;
                             }
                         }
 
