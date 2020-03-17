@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace PacmanWars
 {
-    struct Tile
+    internal struct Tile
     {
         public int Type;
         public Point Position;
@@ -46,36 +46,31 @@ namespace PacmanWars
 
             foreach (Tile tile in _tiles)
             {
-                Rectangle outRectangle = new Rectangle(new Point(tile.Position.X * Game1.TileSize, tile.Position.Y * Game1.TileSize), new Point(Game1.TileSize));
+                Rectangle destRect = new Rectangle(tile.Position.Multiply(Game1.TileSize), new Point(Game1.TileSize));
+                Rectangle srcRect = _tileSprites.ContainsKey(tile.Type) ? _tileSprites[tile.Type] : _tileSprites[-1];
 
-                if (_tileSprites.ContainsKey(tile.Type))
-                {
-                    _batch.Draw(
-                        texture: _spriteSheet,
-                        destinationRectangle: outRectangle,
-                        sourceRectangle: _tileSprites[tile.Type],
-                        color: Color.White
-                    );
-                }
-                else
-                {
-                    _batch.Draw(
-                        texture: _spriteSheet,
-                        destinationRectangle: outRectangle,
-                        sourceRectangle: _tileSprites[-1],
-                        color: Color.White
-                    );
-                }
+                _batch.Draw(
+                    texture: _spriteSheet,
+                    destinationRectangle: destRect,
+                    sourceRectangle: srcRect,
+                    color: Color.White
+                );
             }
 
             _batch.End();
         }
 
+        /// <summary>
+        /// Loads information referent to tile location on sprite sheet from file.
+        /// </summary>
         private void LoadTileData()
         {
-            string[] file = File.ReadAllLines($@"{_game.Content.RootDirectory}\tiles.txt");
+            string[] file = File.ReadAllLines($@"{Game.Content.RootDirectory}\tiles.txt");
 
-            _tileSprites = new Dictionary<int, Rectangle>();
+            _tileSprites = new Dictionary<int, Rectangle>
+            {
+                [-1] = new Rectangle(8 * 16, 9 * 16, 16, 16)
+            };
 
             foreach (string line in file)
             {
@@ -91,18 +86,20 @@ namespace PacmanWars
             }
         }
 
+        /// <summary>
+        /// Reads board's char matrix and converts every wall to a list of tiles.
+        /// </summary>
         private void GenerateTileList()
         {
-            var neighborPositions = new List<(int, Vector2)>
-            {
-                (0b00000001, -Vector2.One),
-                (0b00000010, -Vector2.UnitY),
-                (0b00000100, Vector2.UnitX - Vector2.UnitY),
-                (0b00001000, Vector2.UnitX),
-                (0b00010000, Vector2.One),
-                (0b00100000, Vector2.UnitY),
-                (0b01000000, -Vector2.UnitX + Vector2.UnitY),
-                (0b10000000, -Vector2.UnitX)
+            (int, Point)[] neighborPositions = {
+                (0b00000001, new Point(-1, -1)),
+                (0b00000010, new Point(0, -1)),
+                (0b00000100, new Point(1, -1)),
+                (0b00001000, new Point(1, 0)),
+                (0b00010000, new Point(1, 1)),
+                (0b00100000, new Point(0, 1)),
+                (0b01000000, new Point(-1, 1)),
+                (0b10000000, new Point(-1, 0))
             };
 
             _tiles = new List<Tile>();
@@ -115,21 +112,20 @@ namespace PacmanWars
                     if (_matrix[x, y] == 'W')
                     {
                         // Current position is a wall
-                        Tile tile = new Tile(){ Position = new Point(x, y) };
+                        Tile tile = new Tile(){ Position = new Point(x, y), Type = 0};
 
                         // Go tough the surroundings to find tile type
                         foreach (var (weight, pos) in neighborPositions)
                         {
-                            if ((x + pos.X < 0 || x + pos.X >= _width) || (y + pos.Y < 0 || y + pos.Y >= _heigth))
+                            bool isInsideBounds = (x + pos.X >= 0 && x + pos.X < _width) &&
+                                                  (y + pos.Y >= 0 && y + pos.Y < _heigth);
+
+                            bool isWall = isInsideBounds && _matrix[x + (int) pos.X, y + (int) pos.Y] == 'W';
+
+                            if (!isInsideBounds || isWall)
                             {
-                                // Neighbor is outside of the board
-                                // We consider it as a wall
+                                // Neighbor is either outside of the board or a wall
                                 tile.Type += weight;
-                            }
-                            else if (_matrix[x + (int)pos.X, y + (int)pos.Y] == 'W')
-                            {
-                                // Neighbor is a wall
-                                 tile.Type += weight;
                             }
                         }
 
