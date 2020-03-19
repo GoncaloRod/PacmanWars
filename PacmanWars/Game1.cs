@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -17,6 +18,8 @@ namespace PacmanWars
 
         private Texture2D _spriteSheet;
         private Board _board;
+        private List<PacDot> _pacDots;
+        private List<PowerPellet> _powerPellets;
 
         public Game1()
         {
@@ -100,6 +103,9 @@ namespace PacmanWars
             int height = file.Length;
             char[,] boardMatrix = new char[width, height];
 
+            _pacDots = new List<PacDot>();
+            _powerPellets = new List<PowerPellet>();
+
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
@@ -117,11 +123,21 @@ namespace PacmanWars
                         case 'W':
                             boardMatrix[x, y] = 'W';
                             break;
-                        case 'D':
+                        case ' ':
                             boardMatrix[x, y] = ' ';
+
+                            PacDot dot = new PacDot(this, new Vector2(x, y));
+
+                            _pacDots.Add(dot);
+                            Components.Add(dot);
                             break;
                         case 'P':
                             boardMatrix[x, y] = ' ';
+
+                            PowerPellet pellet = new PowerPellet(this, new Vector2(x, y));
+
+                            _powerPellets.Add(pellet);
+                            Components.Add(pellet);
                             break;
                         case '1':
                             boardMatrix[x, y] = ' ';

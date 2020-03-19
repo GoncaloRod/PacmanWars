@@ -46,6 +46,9 @@
     <Compile Include="Board.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="PacDot.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="PowerPellet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
