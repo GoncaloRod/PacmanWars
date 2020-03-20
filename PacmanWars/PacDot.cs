@@ -32,7 +32,16 @@ namespace PacmanWars
 
         public override void Draw(GameTime gameTime)
         {
+            _batch.Begin();
+
+            _batch.Draw(
+                texture:_spriteSheet,
+                destinationRectangle: new Rectangle((_position * Game1.TileSize).ToPoint(), new Point(Game1.TileSize)),
+                sourceRectangle: new Rectangle(8 * 16, 6 * 16, 16, 16),
+                color: Color.White
+                );
             
+            _batch.End();
         }
     }
 }
