@@ -9,14 +9,14 @@ namespace PacmanWars
         private SpriteBatch _batch;
 
         private Texture2D _spriteSheet;
-        private Vector2 _position;
+        private Point _position;
 
         /// <summary>
         /// Creates an instance of PowerPellet.
         /// </summary>
         /// <param name="game">Reference to game</param>
         /// <param name="position">Position in cells of the Power Pellet</param>
-        public PowerPellet(Game1 game, Vector2 position) : base(game)
+        public PowerPellet(Game1 game, Point position) : base(game)
         {
             _game = game;
             _batch = game.SpriteBatch;

@@ -149,7 +149,7 @@ namespace PacmanWars
                         case ' ':   // "Pac-Dot"
                             boardMatrix[x, y] = ' ';
 
-                            PacDot dot = new PacDot(this, new Vector2(x, y));
+                            PacDot dot = new PacDot(this, new Point(x, y));
 
                             _pacDots.Add(dot);
                             Components.Add(dot);
@@ -157,7 +157,7 @@ namespace PacmanWars
                         case 'P':   // "Power Pellet"
                             boardMatrix[x, y] = ' ';
 
-                            PowerPellet pellet = new PowerPellet(this, new Vector2(x, y));
+                            PowerPellet pellet = new PowerPellet(this, new Point(x, y));
 
                             _powerPellets.Add(pellet);
                             Components.Add(pellet);
@@ -165,14 +165,14 @@ namespace PacmanWars
                         case '1':   // Player 1
                             boardMatrix[x, y] = ' ';
 
-                            _players[0] = new Player(this, new Vector2(x, y), _player1Controls);
+                            _players[0] = new Player(this, new Point(x, y), _player1Controls);
 
                             Components.Add(_players[0]);
                             break;
                         case '2':   // Player 2
                             boardMatrix[x, y] = ' ';
 
-                            _players[1] = new Player(this, new Vector2(x, y), _player2Controls);
+                            _players[1] = new Player(this, new Point(x, y), _player2Controls);
 
                             Components.Add(_players[1]);
                             break;
