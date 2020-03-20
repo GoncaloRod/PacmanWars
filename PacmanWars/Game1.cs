@@ -13,11 +13,28 @@ namespace PacmanWars
     {
         public static int TileSize = 32;
 
+        private static ControlSchema Player1Controls = new ControlSchema
+        {
+            MoveUp = Keys.W,
+            MoveDown = Keys.S,
+            MoveRight = Keys.D,
+            MoveLeft = Keys.A
+        };
+
+        private static ControlSchema Player2Controls = new ControlSchema
+        {
+            MoveUp = Keys.Up,
+            MoveDown = Keys.Down,
+            MoveRight = Keys.Right,
+            MoveLeft = Keys.Left
+        };
+
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
         private Texture2D _spriteSheet;
         private Board _board;
+        private Player[] _players = new Player[2];
         private List<PacDot> _pacDots;
         private List<PowerPellet> _powerPellets;
 
@@ -30,6 +47,9 @@ namespace PacmanWars
         public SpriteBatch SpriteBatch => _spriteBatch;
         public Texture2D SpriteSheet => _spriteSheet;
         public Board Board => _board;
+
+        public Player Player1 => _players[0];
+        public Player Player2 => _players[1];
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -120,10 +140,10 @@ namespace PacmanWars
 
                     switch (file[y][x])
                     {
-                        case 'W':
+                        case 'W':   // Wall
                             boardMatrix[x, y] = 'W';
                             break;
-                        case ' ':
+                        case ' ':   // "Pac-Dot"
                             boardMatrix[x, y] = ' ';
 
                             PacDot dot = new PacDot(this, new Vector2(x, y));
@@ -131,7 +151,7 @@ namespace PacmanWars
                             _pacDots.Add(dot);
                             Components.Add(dot);
                             break;
-                        case 'P':
+                        case 'P':   // "Power Pellet"
                             boardMatrix[x, y] = ' ';
 
                             PowerPellet pellet = new PowerPellet(this, new Vector2(x, y));
@@ -139,16 +159,24 @@ namespace PacmanWars
                             _powerPellets.Add(pellet);
                             Components.Add(pellet);
                             break;
-                        case '1':
+                        case '1':   // Player 1
+                            boardMatrix[x, y] = ' ';
+
+                            _players[0] = new Player(this, new Vector2(x, y), Player1Controls);
+
+                            Components.Add(_players[0]);
+                            break;
+                        case '2':   // Player 2
+                            boardMatrix[x, y] = ' ';
+
+                            _players[1] = new Player(this, new Vector2(x, y), Player2Controls);
+
+                            Components.Add(_players[1]);
+                            break;
+                        case 'S':   // Enemy Spawn
                             boardMatrix[x, y] = ' ';
                             break;
-                        case '2':
-                            boardMatrix[x, y] = ' ';
-                            break;
-                        case 'S':
-                            boardMatrix[x, y] = ' ';
-                            break;
-                        default:
+                        default:    // Others
                             boardMatrix[x, y] = ' ';
                             break;
                     }
