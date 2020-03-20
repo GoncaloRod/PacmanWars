@@ -13,7 +13,7 @@ namespace PacmanWars
     {
         public static int TileSize = 32;
 
-        private static ControlSchema Player1Controls = new ControlSchema
+        private static ControlSchema _player1Controls = new ControlSchema
         {
             MoveUp = Keys.W,
             MoveDown = Keys.S,
@@ -21,7 +21,7 @@ namespace PacmanWars
             MoveLeft = Keys.A
         };
 
-        private static ControlSchema Player2Controls = new ControlSchema
+        private static ControlSchema _player2Controls = new ControlSchema
         {
             MoveUp = Keys.Up,
             MoveDown = Keys.Down,
@@ -50,6 +50,9 @@ namespace PacmanWars
 
         public Player Player1 => _players[0];
         public Player Player2 => _players[1];
+        public List<PacDot> PacDots => _pacDots;
+        public List<PowerPellet> PowerPellets => _powerPellets;
+
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -162,14 +165,14 @@ namespace PacmanWars
                         case '1':   // Player 1
                             boardMatrix[x, y] = ' ';
 
-                            _players[0] = new Player(this, new Vector2(x, y), Player1Controls);
+                            _players[0] = new Player(this, new Vector2(x, y), _player1Controls);
 
                             Components.Add(_players[0]);
                             break;
                         case '2':   // Player 2
                             boardMatrix[x, y] = ' ';
 
-                            _players[1] = new Player(this, new Vector2(x, y), Player2Controls);
+                            _players[1] = new Player(this, new Vector2(x, y), _player2Controls);
 
                             Components.Add(_players[1]);
                             break;
