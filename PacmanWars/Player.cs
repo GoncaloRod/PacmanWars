@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -23,12 +24,15 @@ namespace PacmanWars
         private Game1 _game;
         private SpriteBatch _batch;
 
+        
         private Texture2D _spriteSheet;
         private Point _origin;
         private Point _position;
         private Point _targetPosition;
         private ControlSchema _controls;
+        private Dictionary<Direction, Vector2> spritePositions;
         private Direction _direction = Direction.Up;
+        private int frame = 0;
         private int _score = 0;
 
         public Player(Game1 game, Point position, ControlSchema controls) : base(game)
@@ -39,6 +43,14 @@ namespace PacmanWars
             _spriteSheet = game.SpriteSheet;
             _origin = _position = _targetPosition = position.Multiply(Game1.TileSize);
             _controls = controls;
+
+            spritePositions = new Dictionary<Direction, Vector2>
+            {
+                [Direction.Up] = new Vector2(1, 2),
+                [Direction.Down] = new Vector2(1, 3),
+                [Direction.Right] = new Vector2(1, 0),
+                [Direction.Left] = new Vector2(1, 1)
+            };
         }
 
         /// <summary>
@@ -69,6 +81,13 @@ namespace PacmanWars
                 vec.Normalize();
 
                 _position = (_position.ToVector2() + vec).ToPoint();
+
+                if ((_position.X + Position.Y) % 4 == 0)
+                {
+                    frame++;
+                    if (frame > 1)
+                        frame = 0;
+                }
             }
         }
 
@@ -79,7 +98,7 @@ namespace PacmanWars
             _batch.Draw(
                 texture: _spriteSheet,
                 destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
-                sourceRectangle: new Rectangle(new Point(0), new Point(16)),
+                sourceRectangle: new Rectangle(((spritePositions[_direction] + Vector2.UnitX * -frame) * 16).ToPoint(), (Vector2.One * 16).ToPoint()),
                 color: Color.White
             );
 
@@ -99,6 +118,7 @@ namespace PacmanWars
         {
             KeyboardState state = Keyboard.GetState();
             bool wasKeyPressed = false;
+            frame = 0;
 
             if (state.IsKeyDown(_controls.MoveUp))
             {
