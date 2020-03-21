@@ -20,8 +20,6 @@ namespace PacmanWars
             Up, Down, Right, Left
         }
 
-        private static float _speed = 1.5f;
-
         private Game1 _game;
         private SpriteBatch _batch;
 
