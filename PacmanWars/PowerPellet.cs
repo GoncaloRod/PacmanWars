@@ -10,6 +10,7 @@ namespace PacmanWars
 
         private Texture2D _spriteSheet;
         private Point _position;
+        private bool _destroyNextFrame = false;
 
         /// <summary>
         /// Creates an instance of PowerPellet.
@@ -32,7 +33,19 @@ namespace PacmanWars
 
         public override void Draw(GameTime gameTime)
         {
+            _batch.Begin();
 
+            _batch.Draw(
+                texture: _spriteSheet,
+                destinationRectangle: new Rectangle(_position.Multiply(Game1.TileSize), new Point(Game1.TileSize)),
+                sourceRectangle: new Rectangle(10 * 16, 6 * 16, 16, 16),
+                color: Color.White
+            );
+            if (_destroyNextFrame)
+            {
+                // TODO: Play Power Pellet mode sound
+            }
+            _batch.End();
         }
     }
 }
