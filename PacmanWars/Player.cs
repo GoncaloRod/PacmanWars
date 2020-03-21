@@ -24,13 +24,13 @@ namespace PacmanWars
         private Game1 _game;
         private SpriteBatch _batch;
 
-        
         private Texture2D _spriteSheet;
         private Point _origin;
         private Point _position;
         private Point _targetPosition;
+        private Rectangle _area;
         private ControlSchema _controls;
-        private Dictionary<Direction, Vector2> spritePositions;
+        private Dictionary<Direction, Vector2> _spritePositions;
         private Direction _direction = Direction.Up;
         private int frame = 0;
         private int _score = 0;
@@ -44,7 +44,7 @@ namespace PacmanWars
             _origin = _position = _targetPosition = position.Multiply(Game1.TileSize);
             _controls = controls;
 
-            spritePositions = new Dictionary<Direction, Vector2>
+            _spritePositions = new Dictionary<Direction, Vector2>
             {
                 [Direction.Up] = new Vector2(1, 2),
                 [Direction.Down] = new Vector2(1, 3),
@@ -64,12 +64,20 @@ namespace PacmanWars
         public Vector2 PositionVec => _position.ToVector2();
 
         /// <summary>
+        /// Get player's area rectangle.
+        /// </summary>
+        public Rectangle Area => _area;
+
+        /// <summary>
         /// Get player's score.
         /// </summary>
         public int Score => _score;
 
         public override void Update(GameTime gameTime)
         {
+            // Calculate player rectangle to be used bay enemies, pacdots and power pellets
+            _area = new Rectangle(_position, new Point(Game1.TileSize));
+
             if (_position == _targetPosition)
             {
                 HandleInput();
@@ -98,7 +106,7 @@ namespace PacmanWars
             _batch.Draw(
                 texture: _spriteSheet,
                 destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
-                sourceRectangle: new Rectangle(((spritePositions[_direction] + Vector2.UnitX * -frame) * 16).ToPoint(), (Vector2.One * 16).ToPoint()),
+                sourceRectangle: new Rectangle(((_spritePositions[_direction] + Vector2.UnitX * -frame) * 16).ToPoint(), (Vector2.One * 16).ToPoint()),
                 color: Color.White
             );
 
@@ -161,7 +169,7 @@ namespace PacmanWars
                         _targetPosition.X -= Game1.TileSize;
                         break;
                 }
-                
+
                 if (_game.Board[_targetPosition.X / Game1.TileSize, _targetPosition.Y / Game1.TileSize] != ' ')
                     _targetPosition = _position;
             }
