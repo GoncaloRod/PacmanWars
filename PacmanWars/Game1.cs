@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,6 +12,7 @@ namespace PacmanWars
     /// </summary>
     public class Game1 : Game
     {
+        public static Random Rnd = new Random();
         public static int TileSize = 32;
 
         private static ControlSchema _player1Controls = new ControlSchema
@@ -37,6 +39,7 @@ namespace PacmanWars
         private Player[] _players = new Player[2];
         private List<PacDot> _pacDots;
         private List<PowerPellet> _powerPellets;
+        private List<Enemy> _enemies;
 
         public Game1()
         {
@@ -52,6 +55,7 @@ namespace PacmanWars
         public Player Player2 => _players[1];
         public List<PacDot> PacDots => _pacDots;
         public List<PowerPellet> PowerPellets => _powerPellets;
+        public List<Enemy> Enemies => _enemies;
 
 
         /// <summary>
@@ -128,12 +132,14 @@ namespace PacmanWars
 
             _pacDots = new List<PacDot>();
             _powerPellets = new List<PowerPellet>();
+            _enemies = new List<Enemy>();
 
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
                     // Wall             'W'
+                    // Invisible Wall   'I'
                     // Empty Space      'E'
                     // "Pac-Dot"        ' '
                     // "Power Pellet"   'P'
@@ -145,6 +151,9 @@ namespace PacmanWars
                     {
                         case 'W':   // Wall
                             boardMatrix[x, y] = 'W';
+                            break;
+                        case 'I':   // Invisible Wall
+                            boardMatrix[x, y] = 'I';
                             break;
                         case ' ':   // "Pac-Dot"
                             boardMatrix[x, y] = ' ';
@@ -178,6 +187,14 @@ namespace PacmanWars
                             break;
                         case 'S':   // Enemy Spawn
                             boardMatrix[x, y] = ' ';
+
+                            for (int i = 0; i < 4; i++)
+                            {
+                                Enemy enemy = new Enemy(this, new Point(x, y), i, i + 1.0f);
+
+                                _enemies.Add(enemy);
+                                Components.Add(enemy);
+                            }
                             break;
                         default:    // Others
                             boardMatrix[x, y] = ' ';
