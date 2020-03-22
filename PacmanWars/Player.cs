@@ -170,7 +170,7 @@ namespace PacmanWars
                         break;
                 }
 
-                if (_game.Board[_targetPosition.X / Game1.TileSize, _targetPosition.Y / Game1.TileSize] != ' ')
+                if (_game.Board[_targetPosition.Divide(Game1.TileSize)] != ' ')
                     _targetPosition = _position;
             }
         }

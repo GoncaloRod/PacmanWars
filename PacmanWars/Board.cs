@@ -38,7 +38,18 @@ namespace PacmanWars
             GenerateTileList();
         }
 
+        /// <summary>
+        /// Get board's tile char given an X and a Y position.
+        /// </summary>
+        /// <param name="x">X position.</param>
+        /// <param name="y">Y position.</param>
         public char this[int x, int y] => _matrix[x, y];
+
+        /// <summary>
+        /// Get board's tile char given a Point for the position.
+        /// </summary>
+        /// <param name="pos">Point for the position.</param>
+        public char this[Point pos] => _matrix[pos.X, pos.Y];
 
         public override void Draw(GameTime gameTime)
         {
