@@ -40,14 +40,10 @@ namespace PacmanWars
                 return;
             }
 
-            //TODO player property for its area
-            Rectangle player1Area = new Rectangle(_game.Player1.Position, new Point(Game1.TileSize));
-            Rectangle player2Area = new Rectangle(_game.Player2.Position, new Point(Game1.TileSize));
-
             Rectangle powerPelletArea = new Rectangle(_position.Multiply(Game1.TileSize).Add(new Point((Game1.TileSize - _size) / 2)), new Point(_size));
 
-            bool isPlayer1Intersecting = powerPelletArea.Intersects(player1Area);
-            bool isPlayer2Intersecting = powerPelletArea.Intersects(player2Area);
+            bool isPlayer1Intersecting = powerPelletArea.Intersects(_game.Player1.Area);
+            bool isPlayer2Intersecting = powerPelletArea.Intersects(_game.Player2.Area);
 
             if (isPlayer1Intersecting && isPlayer2Intersecting)
             {
