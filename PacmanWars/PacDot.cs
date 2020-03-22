@@ -38,15 +38,11 @@ namespace PacmanWars
 
                 return;
             }
-
-            // Players position
-            Rectangle player1Area = new Rectangle(_game.Player1.Position, new Point(Game1.TileSize));
-            Rectangle player2Area = new Rectangle(_game.Player2.Position, new Point(Game1.TileSize));
-           
+            
             Rectangle pacDotArea = new Rectangle(_position.Multiply(Game1.TileSize).Add(new Point((Game1.TileSize - _size) / 2)), new Point(_size));
 
-            bool isPlayer1Intersecting = pacDotArea.Intersects(player1Area);
-            bool isPlayer2Intersecting = pacDotArea.Intersects(player2Area);
+            bool isPlayer1Intersecting = pacDotArea.Intersects(_game.Player1.Area);
+            bool isPlayer2Intersecting = pacDotArea.Intersects(_game.Player2.Area);
 
             // Special Case: if player 1 and player 2 intersect pacdot position at the exact same time
             if (isPlayer1Intersecting && isPlayer2Intersecting)
