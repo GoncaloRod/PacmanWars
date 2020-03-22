@@ -37,6 +37,8 @@ namespace PacmanWars
 
         public Player(Game1 game, Point position, ControlSchema controls) : base(game)
         {
+            DrawOrder = 100;
+
             _game = game;
             _batch = game.SpriteBatch;
 

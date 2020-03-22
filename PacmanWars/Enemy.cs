@@ -26,6 +26,8 @@ namespace PacmanWars
 
         public Enemy(Game1 game, Point position, int type, float cooldown = 0.0f) : base(game)
         {
+            DrawOrder = 99;
+
             _game = game;
             _batch = game.SpriteBatch;
 
