@@ -7,6 +7,8 @@ namespace PacmanWars
 {
     public class Enemy : DrawableGameComponent
     {
+        private static float _runAwayTime = 5.0f;
+
         private enum Direction
         {
             Up, Down, Right, Left
@@ -23,6 +25,8 @@ namespace PacmanWars
         private Dictionary<Direction, Point> _neighbors;
         private int _type;
         private float _cooldown;
+        private float _runAwayTimer = 0.0f;
+        private bool _isRunningAway = false;
 
         public Enemy(Game1 game, Point position, int type, float cooldown = 0.0f) : base(game)
         {
@@ -44,6 +48,12 @@ namespace PacmanWars
                 [Direction.Right] = new Point(1, 0),
                 [Direction.Left] = new Point(-1, 0),
             };
+
+            _game.OnPowerPelletPickUp += () =>
+            {
+                _runAwayTimer = _runAwayTime;
+                _isRunningAway = true;
+            };
         }
 
         public override void Update(GameTime gameTime)
@@ -53,6 +63,17 @@ namespace PacmanWars
             {
                 _cooldown -= gameTime.DeltaTime();
                 return;
+            }
+
+            // Reduce run away timer
+            if (_runAwayTimer > 0.0f)
+            {
+                _runAwayTimer -= gameTime.DeltaTime();
+
+                if (_runAwayTimer <= 0.0f)
+                {
+                    _isRunningAway = false;
+                }
             }
 
             if (_targetPosition == _position)
