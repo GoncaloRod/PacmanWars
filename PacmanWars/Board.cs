@@ -18,7 +18,7 @@ namespace PacmanWars
         private SpriteBatch _batch;
 
         private Texture2D _spriteSheet;
-        private int _width, _heigth;
+        private int _width, _height;
         private char[,] _matrix;
         private List<Tile> _tiles;
         private Dictionary<int, Rectangle> _tileSprites;
@@ -38,7 +38,7 @@ namespace PacmanWars
 
             _spriteSheet = game.SpriteSheet;
             _width = width;
-            _heigth = height;
+            _height = height;
             _matrix = matrix;
 
             LoadTileData();
@@ -58,6 +58,16 @@ namespace PacmanWars
         /// </summary>
         /// <param name="pos">Point for the position.</param>
         public char this[Point pos] => _matrix[pos.X, pos.Y];
+
+        /// <summary>
+        /// Get board's width.
+        /// </summary>
+        public int Width => _width;
+
+        /// <summary>
+        /// Get board's height.
+        /// </summary>
+        public int Height => _height;
 
         public override void Draw(GameTime gameTime)
         {
@@ -124,7 +134,7 @@ namespace PacmanWars
             _tiles = new List<Tile>();
 
             // Go tough every tile on the matrix
-            for (int y = 0; y < _heigth; y++)
+            for (int y = 0; y < _height; y++)
             {
                 for (int x = 0; x < _width; x++)
                 {
@@ -137,7 +147,7 @@ namespace PacmanWars
                         foreach (var (weight, pos) in neighborPositions)
                         {
                             bool isInsideBounds = (x + pos.X >= 0 && x + pos.X < _width) &&
-                                                  (y + pos.Y >= 0 && y + pos.Y < _heigth);
+                                                  (y + pos.Y >= 0 && y + pos.Y < _height);
 
                             bool isWall = isInsideBounds && _matrix[x + (int) pos.X, y + (int) pos.Y] == 'W';
 
