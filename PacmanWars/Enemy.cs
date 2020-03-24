@@ -190,9 +190,9 @@ namespace PacmanWars
 
             if (_isRunningAway && (EnemyArea.Intersects(_game.Player1.Area)))
             {
-                _eatenGhosts++;
+                _eatenGhostsP1++;
 
-                switch (_eatenGhosts)
+                switch (_eatenGhostsP1)
                 {
                     case 1:
                         _game.Player1.AddPoints(200);
@@ -205,7 +205,7 @@ namespace PacmanWars
                         break;
                     case 4:
                         _game.Player1.AddPoints(1600);
-                        _eatenGhosts = 0;
+                        _eatenGhostsP1 = 0;
                         break;
                     default:
                         break;
@@ -213,10 +213,36 @@ namespace PacmanWars
 
                 //TODO(Gonçalo): Enemy goes to Spawn
             }
+
             else if (_isRunningAway && (EnemyArea.Intersects(_game.Player2.Area)))
             {
-                _eatenGhosts++;
+                _eatenGhostsP2++;
+
+                switch (_eatenGhostsP2)
+                {
+                    case 1:
+                        _game.Player2.AddPoints(200);
+                        break;
+                    case 2:
+                        _game.Player2.AddPoints(400);
+                        break;
+                    case 3:
+                        _game.Player2.AddPoints(800);
+                        break;
+                    case 4:
+                        _game.Player2.AddPoints(1600);
+                        _eatenGhostsP2 = 0;
+                        break;
+                    default:
+                        break;
+                }
+                //TODO(Gonçalo): Enemy goes to Spawn
             }
+
+            else if (!_isRunningAway && (EnemyArea.Intersects(_game.Player1.Area)))
+                _game.Player1.Die();
+            else if (!_isRunningAway && (EnemyArea.Intersects(_game.Player2.Area)))
+                _game.Player2.Die();
         }
     }
 }
