@@ -23,7 +23,9 @@ namespace PacmanWars
         private Point _targetPosition;
         private Direction _direction = Direction.Up;
         private Dictionary<Direction, Point> _neighbors;
+        private Dictionary<Direction, Vector2> _spritePositions;
         private int _type;
+        private int _frame = 0;
         private float _cooldown;
         private float _runAwayTimer = 0.0f;
         private bool _isRunningAway = false;
@@ -54,6 +56,14 @@ namespace PacmanWars
                 [Direction.Down] = new Point(0, 1),
                 [Direction.Right] = new Point(1, 0),
                 [Direction.Left] = new Point(-1, 0),
+            };
+
+            _spritePositions = new Dictionary<Direction, Vector2>
+            {
+                [Direction.Up] = new Vector2(4, 4 + _type),
+                [Direction.Down] = new Vector2(6, 4 + _type),
+                [Direction.Right] = new Vector2(0, 4 +_type),
+                [Direction.Left] = new Vector2(2, 4 + _type),
             };
 
             _game.OnPowerPelletPickUp += () => _runAwayTimer = _runAwayTime;
@@ -88,7 +98,7 @@ namespace PacmanWars
             _batch.Draw(
                 texture: _spriteSheet,
                 destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
-                sourceRectangle: new Rectangle(new Point(0, 4 + _type).Multiply(16), new Point(16)),
+                sourceRectangle: new Rectangle(((_spritePositions[_direction] + Vector2.UnitX * _frame) * 16).ToPoint(), (Vector2.One * 16).ToPoint()),
                 color: Color.White
             );
 
@@ -161,7 +171,12 @@ namespace PacmanWars
 
                 _position = (_position.ToVector2() + (vec * _speed)).ToPoint();
 
-                // TODO(Diogo): Animation thing
+                if ((_position.X + _position.Y) % 8 == 0)
+                {
+                    _frame++;
+                    if (_frame > 1)
+                        _frame = 0;
+                }
             }
         }
     }

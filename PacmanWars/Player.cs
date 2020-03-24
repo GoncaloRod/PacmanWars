@@ -34,7 +34,7 @@ namespace PacmanWars
         private ControlSchema _controls;
         private Dictionary<Direction, Vector2> _spritePositions;
         private Direction _direction = Direction.Up;
-        private int frame = 0;
+        private int _frame = 0;
         private int _score = 0;
         private int _lives = 3;
 
@@ -101,11 +101,11 @@ namespace PacmanWars
 
                 _position = (_position.ToVector2() + (vec * _speed)).ToPoint();
 
-                if ((_position.X + Position.Y) % 8 == 0)
+                if ((_position.X + _position.Y) % 8 == 0)
                 {
-                    frame++;
-                    if (frame > 1)
-                        frame = 0;
+                    _frame++;
+                    if (_frame > 1)
+                        _frame = 0;
                 }
             }
         }
@@ -117,7 +117,7 @@ namespace PacmanWars
             _batch.Draw(
                 texture: _spriteSheet,
                 destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
-                sourceRectangle: new Rectangle(((_spritePositions[_direction] + Vector2.UnitX * -frame) * 16).ToPoint(), (Vector2.One * 16).ToPoint()),
+                sourceRectangle: new Rectangle(((_spritePositions[_direction] + Vector2.UnitX * -_frame) * 16).ToPoint(), (Vector2.One * 16).ToPoint()),
                 color: Color.White
             );
 
@@ -156,7 +156,7 @@ namespace PacmanWars
         {
             KeyboardState state = Keyboard.GetState();
             bool wasKeyPressed = false;
-            frame = 0;
+            _frame = 0;
 
             if (state.IsKeyDown(_controls.MoveUp))
             {
