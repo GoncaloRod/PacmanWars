@@ -6,6 +6,7 @@ namespace PacmanWars
 {
     public class Enemy : DrawableGameComponent
     {
+        private static float _speed = 2.0f;
         private static float _runAwayTime = 5.0f;
 
         private enum Direction
@@ -158,7 +159,7 @@ namespace PacmanWars
                 Vector2 vec = _targetPosition.ToVector2() - _position.ToVector2();
                 vec.Normalize();
 
-                _position = (_position.ToVector2() + vec).ToPoint();
+                _position = (_position.ToVector2() + (vec * _speed)).ToPoint();
 
                 // TODO(Diogo): Animation thing
             }

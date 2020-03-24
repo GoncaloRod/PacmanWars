@@ -16,6 +16,8 @@ namespace PacmanWars
 
     public class Player : DrawableGameComponent
     {
+        private static float _speed = 2.0f;
+
         private enum Direction
         {
             Up, Down, Right, Left
@@ -97,9 +99,9 @@ namespace PacmanWars
                 Vector2 vec = _targetPosition.ToVector2() - _position.ToVector2();
                 vec.Normalize();
 
-                _position = (_position.ToVector2() + vec).ToPoint();
+                _position = (_position.ToVector2() + (vec * _speed)).ToPoint();
 
-                if ((_position.X + Position.Y) % 4 == 0)
+                if ((_position.X + Position.Y) % 8 == 0)
                 {
                     frame++;
                     if (frame > 1)
