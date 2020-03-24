@@ -26,7 +26,6 @@ namespace PacmanWars
         private int _type;
         private float _cooldown;
         private float _runAwayTimer = 0.0f;
-        private bool _isRunningAway = false;
 
         public Enemy(Game1 game, Point position, int type, float cooldown = 0.0f) : base(game)
         {
@@ -49,11 +48,7 @@ namespace PacmanWars
                 [Direction.Left] = new Point(-1, 0),
             };
 
-            _game.OnPowerPelletPickUp += () =>
-            {
-                _runAwayTimer = _runAwayTime;
-                _isRunningAway = true;
-            };
+            _game.OnPowerPelletPickUp += () => _runAwayTimer = _runAwayTime;
         }
 
         public override void Update(GameTime gameTime)
@@ -67,14 +62,7 @@ namespace PacmanWars
 
             // Reduce run away timer
             if (_runAwayTimer > 0.0f)
-            {
                 _runAwayTimer -= gameTime.DeltaTime();
-
-                if (_runAwayTimer <= 0.0f)
-                {
-                    _isRunningAway = false;
-                }
-            }
 
             if (_targetPosition == _position)
             {
@@ -82,6 +70,33 @@ namespace PacmanWars
                 if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[_direction])] == ' ')
                 {
                     // Yes, I can! :) but should I change????
+
+                    List<Direction> availableDirections = new List<Direction>
+                    {
+                        _direction
+                    };
+
+                    if (_direction == Direction.Up || _direction == Direction.Down)
+                    {
+                        // Can I go left or right?
+                        if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[Direction.Left])] == ' ')
+                            availableDirections.Add(Direction.Left);
+
+                        if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[Direction.Right])] == ' ')
+                            availableDirections.Add(Direction.Right);
+                    }
+                    else
+                    {
+                        // Can I go up or down?
+                        if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[Direction.Up])] == ' ')
+                            availableDirections.Add(Direction.Up);
+
+                        if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[Direction.Down])] == ' ')
+                            availableDirections.Add(Direction.Down);
+                    }
+
+                    _direction = availableDirections[Game1.Rnd.Next(availableDirections.Count)];
+
                     _targetPosition = _position.Add(_neighbors[_direction].Multiply(Game1.TileSize));
                 }
                 else
@@ -113,6 +128,8 @@ namespace PacmanWars
         public override void Draw(GameTime gameTime)
         {
             _batch.Begin();
+
+            bool isRunningAway = _runAwayTimer <= 0;
 
             _batch.Draw(
                 texture: _spriteSheet,
