@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,7 +8,9 @@ namespace PacmanWars
     public class Enemy : DrawableGameComponent
     {
         private static float _speed = 2.0f;
+        private static float _runAwaySpeed = 1.5f;
         private static float _runAwayTime = 5.0f;
+        private static float _cooldownAfterDie = 2.0f;
         private static int _eatenGhostsP1 = 0;
         private static int _eatenGhostsP2 = 0;
 
@@ -174,7 +177,9 @@ namespace PacmanWars
                 Vector2 vec = _targetPosition.ToVector2() - _position.ToVector2();
                 vec.Normalize();
 
-                _position = (_position.ToVector2() + (vec * _speed)).ToPoint();
+                float speed = _isRunningAway ? _runAwaySpeed : _speed;
+
+                _position = (_position.ToVector2() + (vec * speed)).ToPoint();
 
                 if ((_position.X + _position.Y) % 8 == 0)
                 {
@@ -186,67 +191,48 @@ namespace PacmanWars
         }
 
         /// <summary>
-        /// This Function handles the various types of intersections with players
+        /// Handle intersections with players.
         /// </summary>
         private void Intersections()
         {
-            Rectangle EnemyArea = new Rectangle(_position, new Point(Game1.TileSize));
+            Rectangle enemyArea = new Rectangle(_position, new Point(Game1.TileSize));
 
-            if (_isRunningAway && (EnemyArea.Intersects(_game.Player1.Area)))
+            if (_isRunningAway)
             {
-                _eatenGhostsP1++;
-
-                switch (_eatenGhostsP1)
+                if (enemyArea.Intersects(_game.Player1.Area))
                 {
-                    case 1:
-                        _game.Player1.AddPoints(200);
-                        break;
-                    case 2:
-                        _game.Player1.AddPoints(400);
-                        break;
-                    case 3:
-                        _game.Player1.AddPoints(800);
-                        break;
-                    case 4:
-                        _game.Player1.AddPoints(1600);
-                        _eatenGhostsP1 = 0;
-                        break;
-                    default:
-                        break;
+                    _game.Player1.AddPoints((int)Math.Pow(2, ++_eatenGhostsP1));
+
+                    Die();
                 }
+                else if (enemyArea.Intersects(_game.Player2.Area))
+                {
+                    _game.Player2.AddPoints((int)Math.Pow(2, ++_eatenGhostsP2));
 
-                //TODO(Gonçalo): Enemy goes to Spawn
+                    Die();
+                }
             }
-
-            else if (_isRunningAway && (EnemyArea.Intersects(_game.Player2.Area)))
+            else
             {
-                _eatenGhostsP2++;
-
-                switch (_eatenGhostsP2)
+                if (enemyArea.Intersects(_game.Player1.Area))
                 {
-                    case 1:
-                        _game.Player2.AddPoints(200);
-                        break;
-                    case 2:
-                        _game.Player2.AddPoints(400);
-                        break;
-                    case 3:
-                        _game.Player2.AddPoints(800);
-                        break;
-                    case 4:
-                        _game.Player2.AddPoints(1600);
-                        _eatenGhostsP2 = 0;
-                        break;
-                    default:
-                        break;
+                    _game.Player1.Die();
                 }
-                //TODO(Gonçalo): Enemy goes to Spawn
+                else if (enemyArea.Intersects(_game.Player2.Area))
+                {
+                    _game.Player2.Die();
+                }
             }
+        }
 
-            else if (!_isRunningAway && (EnemyArea.Intersects(_game.Player1.Area)))
-                _game.Player1.Die();
-            else if (!_isRunningAway && (EnemyArea.Intersects(_game.Player2.Area)))
-                _game.Player2.Die();
+        /// <summary>
+        /// Kill enemy and set a cooldown.
+        /// Enemy will be automatically moved to his origin.
+        /// </summary>
+        private void Die()
+        {
+            _cooldown = _cooldownAfterDie;
+            _position = _targetPosition = _origin;
         }
     }
 }
