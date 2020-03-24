@@ -1,10 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace PacmanWars
 {
     public class PowerPellet : DrawableGameComponent
     {
+        public static event Action OnPowerPelletPickUp;
+
         private static int _size = 8;
         private static int _points = 50;
 
@@ -36,8 +39,6 @@ namespace PacmanWars
             {
                 _game.PowerPellets.Remove(this);
                 _game.Components.Remove(this);
-                Enemy._eatenGhostsP1 = 0;
-                Enemy._eatenGhostsP2 = 0;
 
                 return;
             }
@@ -67,21 +68,25 @@ namespace PacmanWars
                 }
 
                 _destroyNextFrame = true;
+
+                OnPowerPelletPickUp?.Invoke();
             }
             else if (isPlayer1Intersecting)
             {
                 _game.Player1.AddPoints(_points);
 
                 _destroyNextFrame = true;
+                
+                OnPowerPelletPickUp?.Invoke();
             }
             else if (isPlayer2Intersecting)
             {
                 _game.Player2.AddPoints(_points);
 
                 _destroyNextFrame = true;
-            }
 
-            //TODO: Change Player mode so he can turn into power Pellet mod ang be able to eat enemies
+                OnPowerPelletPickUp?.Invoke();
+            }
         }
 
         public override void Draw(GameTime gameTime)

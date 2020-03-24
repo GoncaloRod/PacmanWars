@@ -8,8 +8,8 @@ namespace PacmanWars
     {
         private static float _speed = 2.0f;
         private static float _runAwayTime = 5.0f;
-        public static int _eatenGhostsP1 = 0;
-        public static int _eatenGhostsP2 = 0;
+        private static int _eatenGhostsP1 = 0;
+        private static int _eatenGhostsP2 = 0;
 
         private enum Direction
         {
@@ -69,7 +69,11 @@ namespace PacmanWars
                 [Direction.Left] = new Vector2(2, 4 + _type),
             };
 
-            _game.OnPowerPelletPickUp += () => _runAwayTimer = _runAwayTime;
+            PowerPellet.OnPowerPelletPickUp += () =>
+            {
+                _eatenGhostsP1 = _eatenGhostsP2 = 0;
+                _runAwayTimer = _runAwayTime;
+            };
         }
 
         public override void Update(GameTime gameTime)

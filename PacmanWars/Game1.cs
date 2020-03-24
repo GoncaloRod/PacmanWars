@@ -12,8 +12,6 @@ namespace PacmanWars
     /// </summary>
     public class Game1 : Game
     {
-        public event Action OnPowerPelletPickUp;
-
         public static Random Rnd = new Random();
         public static int TileSize = 32;
 
