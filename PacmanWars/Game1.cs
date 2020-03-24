@@ -37,6 +37,7 @@ namespace PacmanWars
         private SpriteBatch _spriteBatch;
 
         private Texture2D _spriteSheet;
+        private UI _ui;
         private Board _board;
         private Player[] _players = new Player[2];
         private List<PacDot> _pacDots;
@@ -126,9 +127,12 @@ namespace PacmanWars
             int height = file.Length;
             char[,] boardMatrix = new char[width, height];
 
+            _ui = new UI(this);
             _pacDots = new List<PacDot>();
             _powerPellets = new List<PowerPellet>();
             _enemies = new List<Enemy>();
+
+            Components.Add(_ui);
 
             for (int y = 0; y < height; y++)
             {
