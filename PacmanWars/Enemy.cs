@@ -8,6 +8,8 @@ namespace PacmanWars
     {
         private static float _speed = 2.0f;
         private static float _runAwayTime = 5.0f;
+        public static int _eatenGhostsP1 = 0;
+        public static int _eatenGhostsP2 = 0;
 
         private enum Direction
         {
@@ -16,6 +18,7 @@ namespace PacmanWars
 
         private Game1 _game;
         private SpriteBatch _batch;
+        
 
         private Texture2D _spriteSheet;
         private Point _origin;
@@ -86,14 +89,12 @@ namespace PacmanWars
 
             Move();
 
-            // TODO(Diogo): Check if players are touching enemy and correct take actions
+            Intersections();
         }
 
         public override void Draw(GameTime gameTime)
         {
             _batch.Begin(samplerState: SamplerState.PointClamp);
-
-            // TODO(Diogo): Draw with animations
 
             _batch.Draw(
                 texture: _spriteSheet,
@@ -177,6 +178,44 @@ namespace PacmanWars
                     if (_frame > 1)
                         _frame = 0;
                 }
+            }
+        }
+
+        /// <summary>
+        /// This Function handles the various types of intersections with players
+        /// </summary>
+        private void Intersections()
+        {
+            Rectangle EnemyArea = new Rectangle(_position, new Point(Game1.TileSize));
+
+            if (_isRunningAway && (EnemyArea.Intersects(_game.Player1.Area)))
+            {
+                _eatenGhosts++;
+
+                switch (_eatenGhosts)
+                {
+                    case 1:
+                        _game.Player1.AddPoints(200);
+                        break;
+                    case 2:
+                        _game.Player1.AddPoints(400);
+                        break;
+                    case 3:
+                        _game.Player1.AddPoints(800);
+                        break;
+                    case 4:
+                        _game.Player1.AddPoints(1600);
+                        _eatenGhosts = 0;
+                        break;
+                    default:
+                        break;
+                }
+
+                //TODO(Gonçalo): Enemy goes to Spawn
+            }
+            else if (_isRunningAway && (EnemyArea.Intersects(_game.Player2.Area)))
+            {
+                _eatenGhosts++;
             }
         }
     }

@@ -36,6 +36,8 @@ namespace PacmanWars
             {
                 _game.PowerPellets.Remove(this);
                 _game.Components.Remove(this);
+                Enemy._eatenGhostsP1 = 0;
+                Enemy._eatenGhostsP2 = 0;
 
                 return;
             }
