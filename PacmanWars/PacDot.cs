@@ -82,7 +82,7 @@ namespace PacmanWars
 
         public override void Draw(GameTime gameTime)
         {
-            _batch.Begin();
+            _batch.Begin(samplerState: SamplerState.PointClamp);
 
             _batch.Draw(
                 texture:_spriteSheet,

@@ -84,6 +84,11 @@ namespace PacmanWars
         /// </summary>
         public int Score => _score;
 
+        /// <summary>
+        /// Get player's live amount including current.
+        /// </summary>
+        public int Lives => _lives;
+
         public override void Update(GameTime gameTime)
         {
             // Calculate player rectangle to be used bay enemies, pacdots and power pellets
@@ -112,7 +117,7 @@ namespace PacmanWars
 
         public override void Draw(GameTime gameTime)
         {
-            _batch.Begin();
+            _batch.Begin(samplerState: SamplerState.PointClamp);
 
             _batch.Draw(
                 texture: _spriteSheet,

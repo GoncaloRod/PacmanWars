@@ -91,7 +91,7 @@ namespace PacmanWars
 
         public override void Draw(GameTime gameTime)
         {
-            _batch.Begin();
+            _batch.Begin(samplerState: SamplerState.PointClamp);
 
             // TODO(Diogo): Draw with animations
 
