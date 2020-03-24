@@ -34,6 +34,7 @@ namespace PacmanWars
         private Direction _direction = Direction.Up;
         private int frame = 0;
         private int _score = 0;
+        private int _lives = 3;
 
         public Player(Game1 game, Point position, ControlSchema controls) : base(game)
         {
@@ -124,6 +125,25 @@ namespace PacmanWars
             _score += points;
         }
 
+        /// <summary>
+        /// Kill player and decrement 1 life.
+        /// Player will be automatically moved to his origin. 
+        /// </summary>
+        public void Die()
+        {
+            _lives--;
+
+            _position = _targetPosition = _origin;
+
+            if (_lives == 0)
+            {
+                // TODO: Game Over!
+            }
+        }
+
+        /// <summary>
+        /// Handle player input.
+        /// </summary>
         private void HandleInput()
         {
             KeyboardState state = Keyboard.GetState();
