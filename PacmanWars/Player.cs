@@ -36,6 +36,12 @@ namespace PacmanWars
         private int _score = 0;
         private int _lives = 3;
 
+        /// <summary>
+        /// Creates an instance of Player.
+        /// </summary>
+        /// <param name="game">Reference to the game</param>
+        /// <param name="position">Starting position of the player</param>
+        /// <param name="controls">Control schema for this player</param>
         public Player(Game1 game, Point position, ControlSchema controls) : base(game)
         {
             DrawOrder = 100;

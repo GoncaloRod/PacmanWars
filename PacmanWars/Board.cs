@@ -23,6 +23,14 @@ namespace PacmanWars
         private List<Tile> _tiles;
         private Dictionary<int, Rectangle> _tileSprites;
 
+
+        /// <summary>
+        /// Creates an instance of Board.
+        /// </summary>
+        /// <param name="game">Reference to game</param>
+        /// <param name="width">Width of the board</param>
+        /// <param name="height">Height of the board</param>
+        /// <param name="matrix">Char matrix of the board</param>
         public Board(Game1 game, int width, int height, char[,] matrix) : base(game)
         {
             _game = game;

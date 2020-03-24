@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -26,7 +25,15 @@ namespace PacmanWars
         private int _type;
         private float _cooldown;
         private float _runAwayTimer = 0.0f;
+        private bool _isRunningAway = false;
 
+        /// <summary>
+        /// Creates an instance of Enemy.
+        /// </summary>
+        /// <param name="game">Reference to game</param>
+        /// <param name="position">Starting position in cells of the Enemy</param>
+        /// <param name="type">Type of the Enemy (Used to change colors)</param>
+        /// <param name="cooldown">Starting cooldown of the Enemy</param>
         public Enemy(Game1 game, Point position, int type, float cooldown = 0.0f) : base(game)
         {
             DrawOrder = 99;
@@ -61,14 +68,44 @@ namespace PacmanWars
             }
 
             // Reduce run away timer
-            if (_runAwayTimer > 0.0f)
+            _isRunningAway = _runAwayTimer > 0.0f;
+
+            if (_isRunningAway)
                 _runAwayTimer -= gameTime.DeltaTime();
 
+            Move();
+
+            // TODO(Diogo): Check if players are touching enemy and correct take actions
+        }
+
+        public override void Draw(GameTime gameTime)
+        {
+            _batch.Begin();
+
+            // TODO(Diogo): Draw with animations
+
+            _batch.Draw(
+                texture: _spriteSheet,
+                destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
+                sourceRectangle: new Rectangle(new Point(0, 4 + _type).Multiply(16), new Point(16)),
+                color: Color.White
+            );
+
+            _batch.End();
+        }
+
+        /// <summary>
+        /// Handle enemy movement.
+        /// </summary>
+        private void Move()
+        {
             if (_targetPosition == _position)
             {
                 // Can I still follow the last direction??
                 if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[_direction])] == ' ')
                 {
+                    // TODO(Goncalo): Run away behavior
+
                     // Yes, I can! :) but should I change????
 
                     List<Direction> availableDirections = new List<Direction>
@@ -122,23 +159,9 @@ namespace PacmanWars
                 vec.Normalize();
 
                 _position = (_position.ToVector2() + vec).ToPoint();
+
+                // TODO(Diogo): Animation thing
             }
-        }
-
-        public override void Draw(GameTime gameTime)
-        {
-            _batch.Begin();
-
-            bool isRunningAway = _runAwayTimer <= 0;
-
-            _batch.Draw(
-                texture: _spriteSheet,
-                destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
-                sourceRectangle: new Rectangle(new Point(0, 4 + _type).Multiply(16), new Point(16)),
-                color: Color.White
-            );
-
-            _batch.End();
         }
     }
 }

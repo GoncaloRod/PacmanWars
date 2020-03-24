@@ -92,10 +92,12 @@ namespace PacmanWars
                 sourceRectangle: new Rectangle(10 * 16, 6 * 16, 16, 16),
                 color: Color.White
             );
+
             if (_destroyNextFrame)
             {
                 // TODO: Play Power Pellet mode sound
             }
+
             _batch.End();
         }
     }
