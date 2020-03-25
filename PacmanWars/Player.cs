@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -17,6 +16,7 @@ namespace PacmanWars
     public class Player : DrawableGameComponent
     {
         private static float _speed = 2.0f;
+        private static float _invincibleTimeAfterDie = 2.0f;
         private static int _extraLifeScore = 10000;
 
         private enum Direction
@@ -39,6 +39,7 @@ namespace PacmanWars
         private int _score = 0;
         private int _lives = 3;
         private bool _wasExtraLifeAwarded = false;
+        private float _invincibleTimer = 0.0f;
 
         /// <summary>
         /// Creates an instance of Player.
@@ -93,6 +94,10 @@ namespace PacmanWars
 
         public override void Update(GameTime gameTime)
         {
+            // Reduce invincible timer if needed
+            if (_invincibleTimer > 0.0f)
+                _invincibleTimer -= gameTime.DeltaTime();
+
             // Calculate player rectangle to be used bay enemies, pacdots and power pellets
             _area = new Rectangle(_position, new Point(Game1.TileSize));
 
@@ -153,9 +158,13 @@ namespace PacmanWars
         /// </summary>
         public void Die()
         {
+            // Player can't die if it's invincible
+            if (_invincibleTimer > 0.0f) return;
+
             _lives--;
 
             _position = _targetPosition = _origin;
+            _invincibleTimer = _invincibleTimeAfterDie;
 
             if (_lives == 0)
             {
