@@ -82,18 +82,18 @@ namespace PacmanWars
 
         public override void Update(GameTime gameTime)
         {
+            // Reduce run away timer
+            _isRunningAway = _runAwayTimer > 0.0f;
+
+            if (_isRunningAway)
+                _runAwayTimer -= gameTime.DeltaTime();
+
             // Reduce cooldown
             if (_cooldown > 0.0f)
             {
                 _cooldown -= gameTime.DeltaTime();
                 return;
             }
-
-            // Reduce run away timer
-            _isRunningAway = _runAwayTimer > 0.0f;
-
-            if (_isRunningAway)
-                _runAwayTimer -= gameTime.DeltaTime();
 
             Move();
 
@@ -107,20 +107,20 @@ namespace PacmanWars
             if (!_isRunningAway)
             {
                 _batch.Draw(
-                                texture: _spriteSheet,
-                                destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
-                                sourceRectangle: new Rectangle(((_spritePositions[_direction] + Vector2.UnitX * _frame) * 16).ToPoint(), (Vector2.One * 16).ToPoint()),
-                                color: Color.White
-                            );
+                    texture: _spriteSheet,
+                    destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
+                    sourceRectangle: new Rectangle(((_spritePositions[_direction] + Vector2.UnitX * _frame) * 16).ToPoint(), (Vector2.One * 16).ToPoint()),
+                    color: Color.White
+                );
             }
             else
             {
                 _batch.Draw(
-                                texture: _spriteSheet,
-                                destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
-                                sourceRectangle: new Rectangle(((new Vector2(8,4) + Vector2.UnitX * _frame) * 16).ToPoint(), new Point(16,16)),
-                                color: Color.White
-                            );
+                    texture: _spriteSheet,
+                    destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
+                    sourceRectangle: new Rectangle(((new Vector2(8, 4) + Vector2.UnitX * _frame) * 16).ToPoint(), new Point(16, 16)),
+                    color: Color.White
+                );
             }
 
             _batch.End();
