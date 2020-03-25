@@ -15,11 +15,6 @@ namespace PacmanWars
         private static int _eatenGhostsP1 = 0;
         private static int _eatenGhostsP2 = 0;
 
-        private enum Direction
-        {
-            Up, Down, Right, Left
-        }
-
         private Game1 _game;
         private SpriteBatch _batch;
         

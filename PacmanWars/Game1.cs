@@ -7,6 +7,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace PacmanWars
 {
+    public enum Direction
+    {
+        Up, Down, Right, Left
+    }
+
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
@@ -172,14 +177,14 @@ namespace PacmanWars
                         case '1':   // Player 1
                             boardMatrix[x, y] = ' ';
 
-                            _players[0] = new Player(this, new Point(x, y), _player1Controls);
+                            _players[0] = new Player(this, new Point(x, y), _player1Controls, Direction.Right);
 
                             Components.Add(_players[0]);
                             break;
                         case '2':   // Player 2
                             boardMatrix[x, y] = ' ';
 
-                            _players[1] = new Player(this, new Point(x, y), _player2Controls);
+                            _players[1] = new Player(this, new Point(x, y), _player2Controls, Direction.Left);
 
                             Components.Add(_players[1]);
                             break;

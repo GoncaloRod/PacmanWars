@@ -19,11 +19,6 @@ namespace PacmanWars
         private static float _invincibleTimeAfterDie = 2.0f;
         private static int _extraLifeScore = 10000;
 
-        private enum Direction
-        {
-            Up, Down, Right, Left
-        }
-
         private Game1 _game;
         private SpriteBatch _batch;
 
@@ -34,7 +29,7 @@ namespace PacmanWars
         private Rectangle _area;
         private ControlSchema _controls;
         private Dictionary<Direction, Vector2> _spritePositions;
-        private Direction _direction = Direction.Up;
+        private Direction _direction;
         private int _frame = 0;
         private int _score = 0;
         private int _lives = 3;
@@ -47,7 +42,7 @@ namespace PacmanWars
         /// <param name="game">Reference to the game</param>
         /// <param name="position">Starting position of the player</param>
         /// <param name="controls">Control schema for this player</param>
-        public Player(Game1 game, Point position, ControlSchema controls) : base(game)
+        public Player(Game1 game, Point position, ControlSchema controls, Direction startingDir = Direction.Up) : base(game)
         {
             DrawOrder = 100;
 
@@ -57,6 +52,7 @@ namespace PacmanWars
             _spriteSheet = game.SpriteSheet;
             _origin = _position = _targetPosition = position.Multiply(Game1.TileSize);
             _controls = controls;
+            _direction = startingDir;
 
             _spritePositions = new Dictionary<Direction, Vector2>
             {
@@ -158,7 +154,7 @@ namespace PacmanWars
         /// </summary>
         public void Die()
         {
-            // Player can't die if it's invincible
+            // Player can't die if is invincible
             if (_invincibleTimer > 0.0f) return;
 
             _lives--;
