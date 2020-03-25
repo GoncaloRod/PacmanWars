@@ -104,12 +104,24 @@ namespace PacmanWars
         {
             _batch.Begin(samplerState: SamplerState.PointClamp);
 
-            _batch.Draw(
-                texture: _spriteSheet,
-                destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
-                sourceRectangle: new Rectangle(((_spritePositions[_direction] + Vector2.UnitX * _frame) * 16).ToPoint(), (Vector2.One * 16).ToPoint()),
-                color: Color.White
-            );
+            if (!_isRunningAway)
+            {
+                _batch.Draw(
+                                texture: _spriteSheet,
+                                destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
+                                sourceRectangle: new Rectangle(((_spritePositions[_direction] + Vector2.UnitX * _frame) * 16).ToPoint(), (Vector2.One * 16).ToPoint()),
+                                color: Color.White
+                            );
+            }
+            else
+            {
+                _batch.Draw(
+                                texture: _spriteSheet,
+                                destinationRectangle: new Rectangle(_position, new Point(Game1.TileSize)),
+                                sourceRectangle: new Rectangle(((new Vector2(8,4) + Vector2.UnitX * _frame) * 16).ToPoint(), new Point(16,16)),
+                                color: Color.White
+                            );
+            }
 
             _batch.End();
         }
