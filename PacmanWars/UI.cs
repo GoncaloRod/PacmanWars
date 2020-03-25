@@ -62,7 +62,7 @@ namespace PacmanWars
             // Draw player 2 points
             pointsStr = $"{_game.Player2.Score} points";
             strSize = _namco.MeasureString(pointsStr);
-            strPos = new Vector2((_game.Board.Width - (_game.Player1.Lives - 1)) * Game1.TileSize - strSize.X , _game.Board.Height * Game1.TileSize + (Game1.TileSize - strSize.Y) / 2);
+            strPos = new Vector2((_game.Board.Width - (_game.Player2.Lives - 1)) * Game1.TileSize - strSize.X , _game.Board.Height * Game1.TileSize + (Game1.TileSize - strSize.Y) / 2);
 
             _batch.DrawString(_namco, pointsStr, strPos, Color.White);
 
