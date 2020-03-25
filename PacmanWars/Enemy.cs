@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -120,13 +121,12 @@ namespace PacmanWars
         {
             if (_targetPosition == _position)
             {
+                // TODO(Goncalo): Change AI to follow the player in normal mode and go away from the player when running away
+
                 // Can I still follow the last direction??
                 if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[_direction])] == ' ')
                 {
-                    // TODO(Goncalo): Run away behavior
-
                     // Yes, I can! :) but should I change????
-
                     List<Direction> availableDirections = new List<Direction>
                     {
                         _direction
@@ -151,8 +151,23 @@ namespace PacmanWars
                             availableDirections.Add(Direction.Down);
                     }
 
-                    _direction = availableDirections[Game1.Rnd.Next(availableDirections.Count)];
+                    if (_isRunningAway)
+                    {
+                        availableDirections = availableDirections.OrderBy(dir =>
+                        {
+                            float distP1 = Vector2.Distance(_position.Add(_neighbors[dir].Multiply(Game1.TileSize)).ToVector2(), _game.Player1.PositionVec);
+                            float distP2 = Vector2.Distance(_position.Add(_neighbors[dir].Multiply(Game1.TileSize)).ToVector2(), _game.Player2.PositionVec);
 
+                            return distP1 >= distP2 ? distP1 : distP2;
+                        }).ToList();
+
+                        _direction = availableDirections[0];
+                    }
+                    else
+                    {
+                        _direction = availableDirections[Game1.Rnd.Next(availableDirections.Count)];
+                    }
+                    
                     _targetPosition = _position.Add(_neighbors[_direction].Multiply(Game1.TileSize));
                 }
                 else
