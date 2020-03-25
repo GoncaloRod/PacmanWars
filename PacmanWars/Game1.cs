@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -46,13 +47,33 @@ namespace PacmanWars
         private List<PacDot> _pacDots;
         private List<PowerPellet> _powerPellets;
         private List<Enemy> _enemies;
+        private Player _loserPlayer;
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            Player.OnPlayerLose += () =>
+            {
+                _loserPlayer = _players.First(player => player.Lives == 0);
+
+                // Disable components
+                foreach (Player player in _players)
+                    player.Enabled = false;
+
+                foreach (PacDot pacDot in _pacDots)
+                    pacDot.Enabled = false;
+
+                foreach (PowerPellet powerPellet in _powerPellets)
+                    powerPellet.Enabled = false;
+
+                foreach (Enemy enemy in _enemies)
+                    enemy.Enabled = false;
+            };
         }
 
+        public Vector2 ScreenSize => new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
         public SpriteBatch SpriteBatch => _spriteBatch;
         public Texture2D SpriteSheet => _spriteSheet;
         public Board Board => _board;
@@ -62,6 +83,7 @@ namespace PacmanWars
         public List<PacDot> PacDots => _pacDots;
         public List<PowerPellet> PowerPellets => _powerPellets;
         public List<Enemy> Enemies => _enemies;
+        public Player LoserPlayer => _loserPlayer;
 
 
         /// <summary>
@@ -177,14 +199,14 @@ namespace PacmanWars
                         case '1':   // Player 1
                             boardMatrix[x, y] = ' ';
 
-                            _players[0] = new Player(this, new Point(x, y), _player1Controls, Direction.Right);
+                            _players[0] = new Player(this, new Point(x, y), _player1Controls, 1, Direction.Right);
 
                             Components.Add(_players[0]);
                             break;
                         case '2':   // Player 2
                             boardMatrix[x, y] = ' ';
 
-                            _players[1] = new Player(this, new Point(x, y), _player2Controls, Direction.Left);
+                            _players[1] = new Player(this, new Point(x, y), _player2Controls, 2, Direction.Left);
 
                             Components.Add(_players[1]);
                             break;

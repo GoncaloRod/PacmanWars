@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -15,6 +16,8 @@ namespace PacmanWars
 
     public class Player : DrawableGameComponent
     {
+        public static event Action OnPlayerLose;
+
         private static float _speed = 2.0f;
         private static float _invincibleTimeAfterDie = 2.0f;
         private static int _extraLifeScore = 10000;
@@ -30,6 +33,7 @@ namespace PacmanWars
         private ControlSchema _controls;
         private Dictionary<Direction, Vector2> _spritePositions;
         private Direction _direction;
+        private int _number;
         private int _frame = 0;
         private int _score = 0;
         private int _lives = 3;
@@ -42,7 +46,7 @@ namespace PacmanWars
         /// <param name="game">Reference to the game</param>
         /// <param name="position">Starting position of the player</param>
         /// <param name="controls">Control schema for this player</param>
-        public Player(Game1 game, Point position, ControlSchema controls, Direction startingDir = Direction.Up) : base(game)
+        public Player(Game1 game, Point position, ControlSchema controls, int number, Direction startingDir = Direction.Up) : base(game)
         {
             DrawOrder = 100;
 
@@ -52,6 +56,7 @@ namespace PacmanWars
             _spriteSheet = game.SpriteSheet;
             _origin = _position = _targetPosition = position.Multiply(Game1.TileSize);
             _controls = controls;
+            _number = number;
             _direction = startingDir;
 
             _spritePositions = new Dictionary<Direction, Vector2>
@@ -87,6 +92,11 @@ namespace PacmanWars
         /// Get player's live amount including current.
         /// </summary>
         public int Lives => _lives;
+
+        /// <summary>
+        /// Get player's number.
+        /// </summary>
+        public int Number => _number;
 
         public override void Update(GameTime gameTime)
         {
@@ -164,7 +174,7 @@ namespace PacmanWars
 
             if (_lives == 0)
             {
-                // TODO: Game Over!
+                OnPlayerLose?.Invoke();
             }
         }
 
