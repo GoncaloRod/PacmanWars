@@ -17,6 +17,7 @@ namespace PacmanWars
     public class Player : DrawableGameComponent
     {
         private static float _speed = 2.0f;
+        private static int _extraLifeScore = 10000;
 
         private enum Direction
         {
@@ -37,6 +38,7 @@ namespace PacmanWars
         private int _frame = 0;
         private int _score = 0;
         private int _lives = 3;
+        private bool _wasExtraLifeAwarded = false;
 
         /// <summary>
         /// Creates an instance of Player.
@@ -136,6 +138,13 @@ namespace PacmanWars
         public void AddPoints(int points)
         {
             _score += points;
+
+            // Player is awarded a single bonus life at 10000 points
+            if (!_wasExtraLifeAwarded && _score >= _extraLifeScore)
+            {
+                _lives++;
+                _wasExtraLifeAwarded = true;
+            }
         }
 
         /// <summary>
