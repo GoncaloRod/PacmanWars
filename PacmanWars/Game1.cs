@@ -188,7 +188,7 @@ namespace PacmanWars
 
                             for (int i = 0; i < 4; i++)
                             {
-                                Enemy enemy = new Enemy(this, new Point(x, y), i, i + 1.0f);
+                                Enemy enemy = new Enemy(this, new Point(x, y), i, i * 5.0f);
 
                                 _enemies.Add(enemy);
                                 Components.Add(enemy);

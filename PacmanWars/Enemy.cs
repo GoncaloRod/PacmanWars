@@ -8,9 +8,9 @@ namespace PacmanWars
     public class Enemy : DrawableGameComponent
     {
         private static float _speed = 2.0f;
-        private static float _runAwaySpeed = 1.5f;
+        private static float _runAwaySpeed = 1.8f;
         private static float _runAwayTime = 5.0f;
-        private static float _cooldownAfterDie = 2.0f;
+        private static float _cooldownAfterDie = 1.0f;
         private static int _eatenGhostsP1 = 0;
         private static int _eatenGhostsP2 = 0;
 
