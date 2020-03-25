@@ -201,13 +201,13 @@ namespace PacmanWars
             {
                 if (enemyArea.Intersects(_game.Player1.Area))
                 {
-                    _game.Player1.AddPoints((int)Math.Pow(2, ++_eatenGhostsP1));
+                    _game.Player1.AddPoints((int)Math.Pow(2, ++_eatenGhostsP1) * 100);
 
                     Die();
                 }
                 else if (enemyArea.Intersects(_game.Player2.Area))
                 {
-                    _game.Player2.AddPoints((int)Math.Pow(2, ++_eatenGhostsP2));
+                    _game.Player2.AddPoints((int)Math.Pow(2, ++_eatenGhostsP2) * 100);
 
                     Die();
                 }
