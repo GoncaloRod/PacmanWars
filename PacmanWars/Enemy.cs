@@ -226,13 +226,15 @@ namespace PacmanWars
         }
 
         /// <summary>
-        /// Kill enemy and set a cooldown.
+        /// Kill enemy, set a cooldown and reset run away timer.
         /// Enemy will be automatically moved to his origin.
         /// </summary>
         private void Die()
         {
             _cooldown = _cooldownAfterDie;
-            _position = _targetPosition = _origin;
+            _runAwayTimer = 0.0f;
+            _position = _origin;
+            _targetPosition = _position.Add(new Point(0, -2).Multiply(Game1.TileSize));
         }
     }
 }
