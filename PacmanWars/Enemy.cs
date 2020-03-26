@@ -126,12 +126,14 @@ namespace PacmanWars
         /// </summary>
         private void Move()
         {
-            if (_targetPosition == _position)
+            float dist = Vector2.Distance(_position.ToVector2(), _targetPosition.ToVector2());
+
+            if (dist <= 1)
             {
                 // TODO(Goncalo): Change AI to follow the player in normal mode and go away from the player when running away
 
                 // Can I still follow the last direction??
-                if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[_direction])] == ' ')
+                if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(_neighbors[_direction])] == ' ')
                 {
                     // Yes, I can! :) but should I change????
                     List<Direction> availableDirections = new List<Direction>
@@ -142,19 +144,19 @@ namespace PacmanWars
                     if (_direction == Direction.Up || _direction == Direction.Down)
                     {
                         // Can I go left or right?
-                        if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[Direction.Left])] == ' ')
+                        if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(_neighbors[Direction.Left])] == ' ')
                             availableDirections.Add(Direction.Left);
 
-                        if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[Direction.Right])] == ' ')
+                        if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(_neighbors[Direction.Right])] == ' ')
                             availableDirections.Add(Direction.Right);
                     }
                     else
                     {
                         // Can I go up or down?
-                        if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[Direction.Up])] == ' ')
+                        if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(_neighbors[Direction.Up])] == ' ')
                             availableDirections.Add(Direction.Up);
 
-                        if (_game.Board[_position.Divide(Game1.TileSize).Add(_neighbors[Direction.Down])] == ' ')
+                        if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(_neighbors[Direction.Down])] == ' ')
                             availableDirections.Add(Direction.Down);
                     }
 
@@ -162,8 +164,8 @@ namespace PacmanWars
                     {
                         availableDirections = availableDirections.OrderBy(dir =>
                         {
-                            float distP1 = Vector2.Distance(_position.Add(_neighbors[dir].Multiply(Game1.TileSize)).ToVector2(), _game.Player1.PositionVec);
-                            float distP2 = Vector2.Distance(_position.Add(_neighbors[dir].Multiply(Game1.TileSize)).ToVector2(), _game.Player2.PositionVec);
+                            float distP1 = Vector2.Distance(_targetPosition.Add(_neighbors[dir].Multiply(Game1.TileSize)).ToVector2(), _game.Player1.PositionVec);
+                            float distP2 = Vector2.Distance(_targetPosition.Add(_neighbors[dir].Multiply(Game1.TileSize)).ToVector2(), _game.Player2.PositionVec);
 
                             return distP1 >= distP2 ? distP1 : distP2;
                         }).ToList();
@@ -175,7 +177,7 @@ namespace PacmanWars
                         _direction = availableDirections[Game1.Rnd.Next(availableDirections.Count)];
                     }
                     
-                    _targetPosition = _position.Add(_neighbors[_direction].Multiply(Game1.TileSize));
+                    _targetPosition = _targetPosition.Add(_neighbors[_direction].Multiply(Game1.TileSize));
                 }
                 else
                 {
@@ -183,14 +185,14 @@ namespace PacmanWars
                     List<Direction> availableDirections = new List<Direction>();
 
                     foreach (var dir in _neighbors)
-                        if (_game.Board[_position.Divide(Game1.TileSize).Add(dir.Value)] == ' ')
+                        if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(dir.Value)] == ' ')
                             availableDirections.Add(dir.Key);
 
                     // This shouldn't happen, but better safe than sorry
                     if (availableDirections.Count == 0) return;
 
                     _direction = availableDirections[Game1.Rnd.Next(availableDirections.Count)];
-                    _targetPosition = _position.Add(_neighbors[_direction].Multiply(Game1.TileSize));
+                    _targetPosition = _targetPosition.Add(_neighbors[_direction].Multiply(Game1.TileSize));
                 }
             }
             else
