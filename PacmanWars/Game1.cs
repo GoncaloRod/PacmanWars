@@ -130,6 +130,11 @@ namespace PacmanWars
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            if (_pacDots.Count == 0 && _powerPellets.Count == 0)
+            {
+                ReloadLevel();
+            }
+
             base.Update(gameTime);
         }
 
@@ -234,6 +239,42 @@ namespace PacmanWars
             _graphics.PreferredBackBufferWidth = width * TileSize;
             _graphics.PreferredBackBufferHeight = (height + 1) * TileSize;
             _graphics.ApplyChanges();
+        }
+
+        private void ReloadLevel()
+        {
+            string[] file = File.ReadAllLines($@"{Content.RootDirectory}\board.txt");
+
+            int width = file[0].Length;
+            int height = file.Length;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    switch (file[y][x])
+                    {
+                        case ' ':
+                            PacDot dot = new PacDot(this, new Point(x, y));
+
+                            _pacDots.Add(dot);
+                            Components.Add(dot);
+                            break;
+                        case 'P':
+                            PowerPellet pellet = new PowerPellet(this, new Point(x, y));
+
+                            _powerPellets.Add(pellet);
+                            Components.Add(pellet);
+                            break;
+                    }
+                }
+            }
+
+            foreach (Player player in _players)
+                player.ResetPosition();
+
+            foreach (Enemy enemy in _enemies)
+                enemy.ResetPosition();
         }
     }
 }

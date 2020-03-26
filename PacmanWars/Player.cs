@@ -179,6 +179,14 @@ namespace PacmanWars
         }
 
         /// <summary>
+        /// Reset player position.
+        /// </summary>
+        public void ResetPosition()
+        {
+            _position = _targetPosition = _origin;
+        }
+
+        /// <summary>
         /// Handle player input.
         /// </summary>
         private void HandleInput()

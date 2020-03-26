@@ -28,6 +28,7 @@ namespace PacmanWars
         private Dictionary<Direction, Vector2> _spritePositions;
         private int _type;
         private int _frame = 0;
+        private float _statCooldown;
         private float _cooldown;
         private float _runAwayTimer = 0.0f;
         private bool _isRunningAway = false;
@@ -50,7 +51,7 @@ namespace PacmanWars
             _origin = _position = position.Multiply(Game1.TileSize);
             _targetPosition = _origin.Add(new Point(0, -2).Multiply(Game1.TileSize));
             _type = type;
-            _cooldown = cooldown;
+            _statCooldown = _cooldown = cooldown;
 
             _neighbors = new Dictionary<Direction, Point>
             {
@@ -119,6 +120,14 @@ namespace PacmanWars
             }
 
             _batch.End();
+        }
+
+        public void ResetPosition()
+        {
+            _cooldown = _statCooldown;
+            _runAwayTimer = 0.0f;
+            _position = _origin;
+            _targetPosition = _position.Add(new Point(0, -2).Multiply(Game1.TileSize));
         }
 
         /// <summary>
