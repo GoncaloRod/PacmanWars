@@ -58,6 +58,7 @@ namespace PacmanWars
         private List<PowerPellet> _powerPellets;
         private List<Enemy> _enemies;
         private Player _winner;
+        private int _highScore;
 
         public Game1()
         {
@@ -116,6 +117,10 @@ namespace PacmanWars
         /// </summary>
         public Player Winner => _winner;
 
+        /// <summary>
+        /// Get current existing High Score.
+        /// </summary>
+        public int HighScore => _highScore;
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -125,7 +130,7 @@ namespace PacmanWars
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Read High Score from file
+            LoadHighScore();
 
             Player.OnPlayerLose += () =>
             {
@@ -143,6 +148,9 @@ namespace PacmanWars
 
                 foreach (Enemy enemy in _enemies)
                     enemy.Enabled = false;
+
+                if (_winner.Score > HighScore)
+                    SaveHighScore(_winner.Score);
             };
 
             base.Initialize();
@@ -336,6 +344,36 @@ namespace PacmanWars
 
             foreach (Enemy enemy in _enemies)
                 enemy.ResetPosition();
+        }
+
+        /// <summary>
+        /// Read High Score from file if available.
+        /// If not High Score will be set to 0.
+        /// </summary>
+        private void LoadHighScore()
+        {
+            try
+            {
+                string[] file = File.ReadAllLines($@"{Content.RootDirectory}\highscore.txt");
+
+                if (file.Length != 0 && !int.TryParse(file[0], out _highScore))
+                {
+                    _highScore = 0;
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                _highScore = 0;
+            }
+        }
+
+        /// <summary>
+        /// Save new High Score in file.
+        /// </summary>
+        /// <param name="newHighScore">New High Score to save.</param>
+        private void SaveHighScore(int newHighScore)
+        {
+            File.WriteAllText($@"{Content.RootDirectory}\highscore.txt", newHighScore.ToString());
         }
     }
 }
