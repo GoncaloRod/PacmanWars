@@ -4,10 +4,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace PacmanWars
 {
+    /// <summary>
+    /// This represents a Pac-Dot and it's responsible to handle intersections with players.
+    /// </summary>
     public class PacDot : DrawableGameComponent
     {
-        private static int _points = 10;
-        private static int _size = 2;
+        private const int Points = 10;
+        private const int Size = 2;
 
         private Game1 _game;
         private SpriteBatch _batch;
@@ -24,6 +27,8 @@ namespace PacmanWars
         /// <param name="position">Position in cells of the Pac-Dot</param>
         public PacDot(Game1 game, Point position) : base(game)
         {
+            DrawOrder = 0;
+
             _game = game;
             _batch = game.SpriteBatch;
 
@@ -42,42 +47,42 @@ namespace PacmanWars
                 return;
             }
             
-            Rectangle pacDotArea = new Rectangle(_position.Multiply(Game1.TileSize).Add(new Point((Game1.TileSize - _size) / 2)), new Point(_size));
+            Rectangle pacDotArea = new Rectangle(_position.Multiply(Game1.TileSize) + new Point((Game1.TileSize - Size) / 2), new Point(Size));
 
             bool isPlayer1Intersecting = pacDotArea.Intersects(_game.Player1.Area);
             bool isPlayer2Intersecting = pacDotArea.Intersects(_game.Player2.Area);
 
-            // Special Case: if player 1 and player 2 intersect pacdot position at the exact same time
+            // Special Case: if player 1 and player 2 intersect Pac-Dot position at the exact same time
             if (isPlayer1Intersecting && isPlayer2Intersecting)
             {
                 float player1DistanceToDot = Vector2.Distance(_game.Player1.PositionVec, _position.ToVector2());
                 float player2DistanceToDot = Vector2.Distance(_game.Player2.PositionVec, _position.ToVector2());
 
                 if (player1DistanceToDot < player2DistanceToDot)
-                    _game.Player1.AddPoints(_points);
+                    _game.Player1.AddPoints(Points);
                 else if (player2DistanceToDot < player1DistanceToDot)
-                    _game.Player2.AddPoints(_points);
+                    _game.Player2.AddPoints(Points);
                 else
                 {
-                    // Player are at the same distance from the pacdot
+                    // Players are at the same distance from the Pac-Dot
                     // The one with less points wins
                     if (_game.Player1.Score < _game.Player2.Score)
-                        _game.Player1.AddPoints(_points);
+                        _game.Player1.AddPoints(Points);
                     else
-                        _game.Player2.AddPoints(_points);
+                        _game.Player2.AddPoints(Points);
                 }
 
                 _destroyNextFrame = true;
             }
             else if (isPlayer1Intersecting)
 	        {
-                _game.Player1.AddPoints(_points);
+                _game.Player1.AddPoints(Points);
 
                 _destroyNextFrame = true;
             }
             else if (isPlayer2Intersecting)
 	        {
-                _game.Player2.AddPoints(_points);
+                _game.Player2.AddPoints(Points);
 
                 _destroyNextFrame = true;
             }

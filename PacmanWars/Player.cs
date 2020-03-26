@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace PacmanWars
 {
+    /// <summary>
+    /// This represents a controls schema to be used by Player class when getting inputs from the user.
+    /// </summary>
     public struct ControlSchema
     {
         public Keys MoveUp;
@@ -14,13 +17,19 @@ namespace PacmanWars
         public Keys MoveLeft;
     }
 
+    /// <summary>
+    /// This represents a player and it's responsible handle movement, lives and score.
+    /// </summary>
     public class Player : DrawableGameComponent
     {
+        /// <summary>
+        /// This event is triggered when a player runs out of lives.
+        /// </summary>
         public static event Action OnPlayerLose;
 
-        private static float _speed = 2.0f;
-        private static float _invincibleTimeAfterDie = 2.0f;
-        private static int _extraLifeScore = 10000;
+        private const float _speed = 2.0f;
+        private const float _invincibleTimeAfterDie = 2.0f;
+        private const int _extraLifeScore = 10000;
 
         private Game1 _game;
         private SpriteBatch _batch;
@@ -48,7 +57,7 @@ namespace PacmanWars
         /// <param name="controls">Control schema for this player</param>
         public Player(Game1 game, Point position, ControlSchema controls, int number, Direction startingDir = Direction.Up) : base(game)
         {
-            DrawOrder = 100;
+            DrawOrder = 2;
 
             _game = game;
             _batch = game.SpriteBatch;

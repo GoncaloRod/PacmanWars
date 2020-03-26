@@ -5,12 +5,18 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace PacmanWars
 {
+    /// <summary>
+    /// This represents a Pac-Dot and it's responsible to handle intersections with players and active Run Away mode on Enemies.
+    /// </summary>
     public class PowerPellet : DrawableGameComponent
     {
+        /// <summary>
+        /// This event is triggered when a player picks up a power pellet.
+        /// </summary>
         public static event Action OnPowerPelletPickUp;
 
-        private static int _size = 8;
-        private static int _points = 50;
+        private const int _size = 8;
+        private const int _points = 50;
 
         private Game1 _game;
         private SpriteBatch _batch;
@@ -28,6 +34,8 @@ namespace PacmanWars
         /// <param name="position">Position in cells of the Power Pellet</param>
         public PowerPellet(Game1 game, Point position) : base(game)
         {
+            DrawOrder = 0;
+
             _game = game;
             _batch = game.SpriteBatch;
 
@@ -46,7 +54,7 @@ namespace PacmanWars
                 return;
             }
 
-            Rectangle powerPelletArea = new Rectangle(_position.Multiply(Game1.TileSize).Add(new Point((Game1.TileSize - _size) / 2)), new Point(_size));
+            Rectangle powerPelletArea = new Rectangle(_position.Multiply(Game1.TileSize) + new Point((Game1.TileSize - _size) / 2), new Point(_size));
 
             bool isPlayer1Intersecting = powerPelletArea.Intersects(_game.Player1.Area);
             bool isPlayer2Intersecting = powerPelletArea.Intersects(_game.Player2.Area);
@@ -62,7 +70,7 @@ namespace PacmanWars
                     _game.Player2.AddPoints(_points);
                 else
                 {
-                    // Player are at the same distance from the powerPellet
+                    // Players are at the same distance from the Power Pellet
                     // The one with less points wins
                     if (_game.Player1.Score < _game.Player2.Score)
                         _game.Player1.AddPoints(_points);

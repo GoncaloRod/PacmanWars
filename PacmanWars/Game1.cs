@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace PacmanWars
 {
+    /// <summary>
+    /// Can be used to represent the direction that a component, like Players or Enemies, is facing.
+    /// </summary>
     public enum Direction
     {
         Up, Down, Right, Left
@@ -18,10 +21,17 @@ namespace PacmanWars
     /// </summary>
     public class Game1 : Game
     {
-        public static Random Rnd = new Random();
-        public static int TileSize = 32;
+        /// <summary>
+        /// Game's tile size in pixels.
+        /// </summary>
+        public const int TileSize = 32;
 
-        private static ControlSchema _player1Controls = new ControlSchema
+        /// <summary>
+        /// Random number generator to be used across all game.
+        /// </summary>
+        public static Random Rnd = new Random();
+
+        private readonly ControlSchema _player1Controls = new ControlSchema
         {
             MoveUp = Keys.W,
             MoveDown = Keys.S,
@@ -29,7 +39,7 @@ namespace PacmanWars
             MoveLeft = Keys.A
         };
 
-        private static ControlSchema _player2Controls = new ControlSchema
+        private readonly ControlSchema _player2Controls = new ControlSchema
         {
             MoveUp = Keys.Up,
             MoveDown = Keys.Down,
@@ -47,16 +57,79 @@ namespace PacmanWars
         private List<PacDot> _pacDots;
         private List<PowerPellet> _powerPellets;
         private List<Enemy> _enemies;
-        private Player _loserPlayer;
+        private Player _winner;
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+        }
+
+        /// <summary>
+        /// Get screen size in the form of a Vector2.
+        /// </summary>
+        public Vector2 ScreenSize => new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+        
+        /// <summary>
+        /// Get game's sprite batch.
+        /// </summary>
+        public SpriteBatch SpriteBatch => _spriteBatch;
+
+        /// <summary>
+        /// Get game's sprite sheet.
+        /// </summary>
+        public Texture2D SpriteSheet => _spriteSheet;
+
+        /// <summary>
+        /// Get game's board.
+        /// </summary>
+        public Board Board => _board;
+
+        /// <summary>
+        /// Get game's player 1.
+        /// </summary>
+        public Player Player1 => _players[0];
+
+        /// <summary>
+        /// Get game's player 2.
+        /// </summary>
+        public Player Player2 => _players[1];
+
+        /// <summary>
+        /// Get a list with game's current active Pac-Dots.
+        /// </summary>
+        public List<PacDot> PacDots => _pacDots;
+
+        /// <summary>
+        /// Get a list with game's current active Power Pellets.
+        /// </summary>
+        public List<PowerPellet> PowerPellets => _powerPellets;
+
+        /// <summary>
+        /// Get a list with game's enemies.
+        /// </summary>
+        public List<Enemy> Enemies => _enemies;
+
+        /// <summary>
+        /// Get the game's winner.
+        /// This will be null if there is no winner yet.
+        /// </summary>
+        public Player Winner => _winner;
+
+
+        /// <summary>
+        /// Allows the game to perform any initialization it needs to before starting to run.
+        /// This is where it can query for any required services and load any non-graphic
+        /// related content.  Calling base.Initialize will enumerate through any components
+        /// and initialize them as well.
+        /// </summary>
+        protected override void Initialize()
+        {
+            // TODO: Read High Score from file
 
             Player.OnPlayerLose += () =>
             {
-                _loserPlayer = _players.First(player => player.Lives == 0);
+                _winner = _players.First(player => player.Lives != 0);
 
                 // Disable components
                 foreach (Player player in _players)
@@ -71,29 +144,7 @@ namespace PacmanWars
                 foreach (Enemy enemy in _enemies)
                     enemy.Enabled = false;
             };
-        }
 
-        public Vector2 ScreenSize => new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
-        public SpriteBatch SpriteBatch => _spriteBatch;
-        public Texture2D SpriteSheet => _spriteSheet;
-        public Board Board => _board;
-
-        public Player Player1 => _players[0];
-        public Player Player2 => _players[1];
-        public List<PacDot> PacDots => _pacDots;
-        public List<PowerPellet> PowerPellets => _powerPellets;
-        public List<Enemy> Enemies => _enemies;
-        public Player LoserPlayer => _loserPlayer;
-
-
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
-        protected override void Initialize()
-        {
             base.Initialize();
         }
 
@@ -109,6 +160,8 @@ namespace PacmanWars
             _spriteSheet = Content.Load<Texture2D>("ss");
 
             LoadLevel();
+
+            base.LoadContent();
         }
 
         /// <summary>
@@ -117,7 +170,9 @@ namespace PacmanWars
         /// </summary>
         protected override void UnloadContent()
         {
-            
+            _spriteSheet.Dispose();
+
+            base.UnloadContent();
         }
 
         /// <summary>
@@ -149,6 +204,9 @@ namespace PacmanWars
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// Load level when game stars creating board, players, enemies, Pac-Dots and Power Pellets.
+        /// </summary>
         private void LoadLevel()
         {
             string[] file = File.ReadAllLines($@"{Content.RootDirectory}\board.txt");
@@ -241,6 +299,9 @@ namespace PacmanWars
             _graphics.ApplyChanges();
         }
 
+        /// <summary>
+        /// Reloads the level by moving players and enemies to their initial positions and recreates every Pac-Dot and Power Pellet.
+        /// </summary>
         private void ReloadLevel()
         {
             string[] file = File.ReadAllLines($@"{Content.RootDirectory}\board.txt");

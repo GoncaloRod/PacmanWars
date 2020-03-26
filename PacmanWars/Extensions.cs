@@ -2,6 +2,9 @@
 
 namespace PacmanWars
 {
+    /// <summary>
+    /// Extension methods for external classes.
+    /// </summary>
     public static class Extensions
     {
         /// <summary>
@@ -14,27 +17,7 @@ namespace PacmanWars
         }
 
         #region Point Class Extentions
-
-        /// <summary>
-        /// Add a Point to current instance of Point.
-        /// </summary>
-        /// <param name="point">Point to add to current Point.</param>
-        /// <returns>Final Point after sum.</returns>
-        public static Point Add(this Point point, Point other)
-        {
-            return new Point(point.X + other.X, point.Y + other.Y);
-        }
-
-        /// <summary>
-        /// Subtract a Point to current instance of Point.
-        /// </summary>
-        /// <param name="point">Point to subtract to current Point.</param>
-        /// <returns>Final Point after subtraction.</returns>
-        public static Point Subtract(this Point point, Point other)
-        {
-            return new Point(point.X - other.X, point.Y - other.Y);
-        }
-
+        
         /// <summary>
         /// Multiply current instance of Point by a given value.
         /// </summary>

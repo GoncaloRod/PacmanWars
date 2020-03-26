@@ -6,12 +6,18 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace PacmanWars
 {
+    /// <summary>
+    /// This represents a board tile.
+    /// </summary>
     internal struct Tile
     {
         public int Type;
         public Point Position;
     }
 
+    /// <summary>
+    /// This represents the game board and it's responsible to draw it on screen using the correct tiles.
+    /// </summary>
     public class Board : DrawableGameComponent
     {
         private Game1 _game;
@@ -33,6 +39,8 @@ namespace PacmanWars
         /// <param name="matrix">Char matrix of the board</param>
         public Board(Game1 game, int width, int height, char[,] matrix) : base(game)
         {
+            DrawOrder = 0;
+
             _game = game;
             _batch = game.SpriteBatch;
 

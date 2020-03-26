@@ -6,18 +6,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace PacmanWars
 {
+    /// <summary>
+    /// This represents an enemy and it's responsible handle intersections with players and autonomous movement.
+    /// </summary>
     public class Enemy : DrawableGameComponent
     {
-        private static float _speed = 2.0f;
-        private static float _runAwaySpeed = 1.8f;
-        private static float _runAwayTime = 5.0f;
-        private static float _cooldownAfterDie = 1.0f;
+        private const float NormalSpeed = 2.0f;
+        private const float RunAwaySpeed = 1.8f;
+        private const float RunAwayTime = 5.0f;
+        private const float CooldownAfterDie = 1.0f;
+
         private static int _eatenGhostsP1 = 0;
         private static int _eatenGhostsP2 = 0;
 
         private Game1 _game;
         private SpriteBatch _batch;
-        
 
         private Texture2D _spriteSheet;
         private Point _origin;
@@ -42,14 +45,14 @@ namespace PacmanWars
         /// <param name="cooldown">Starting cooldown of the Enemy</param>
         public Enemy(Game1 game, Point position, int type, float cooldown = 0.0f) : base(game)
         {
-            DrawOrder = 99;
+            DrawOrder = 1;
 
             _game = game;
             _batch = game.SpriteBatch;
 
             _spriteSheet = game.SpriteSheet;
             _origin = _position = position.Multiply(Game1.TileSize);
-            _targetPosition = _origin.Add(new Point(0, -2).Multiply(Game1.TileSize));
+            _targetPosition = _origin + new Point(0, -2).Multiply(Game1.TileSize);
             _type = type;
             _statCooldown = _cooldown = cooldown;
 
@@ -65,14 +68,14 @@ namespace PacmanWars
             {
                 [Direction.Up] = new Vector2(4, 4 + _type),
                 [Direction.Down] = new Vector2(6, 4 + _type),
-                [Direction.Right] = new Vector2(0, 4 +_type),
+                [Direction.Right] = new Vector2(0, 4 + _type),
                 [Direction.Left] = new Vector2(2, 4 + _type),
             };
 
             PowerPellet.OnPowerPelletPickUp += () =>
             {
                 _eatenGhostsP1 = _eatenGhostsP2 = 0;
-                _runAwayTimer = _runAwayTime;
+                _runAwayTimer = RunAwayTime;
             };
         }
 
@@ -122,12 +125,15 @@ namespace PacmanWars
             _batch.End();
         }
 
+        /// <summary>
+        /// Reset enemy's position.
+        /// </summary>
         public void ResetPosition()
         {
             _cooldown = _statCooldown;
             _runAwayTimer = 0.0f;
             _position = _origin;
-            _targetPosition = _position.Add(new Point(0, -2).Multiply(Game1.TileSize));
+            _targetPosition = (_position + new Point(0, -2)).Multiply(Game1.TileSize);
         }
 
         /// <summary>
@@ -139,70 +145,35 @@ namespace PacmanWars
 
             if (dist <= 1)
             {
-                // TODO(Goncalo): Change AI to follow the player in normal mode and go away from the player when running away
+                List<Direction> availableDirections = new List<Direction>();
 
-                // Can I still follow the last direction??
-                if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(_neighbors[_direction])] == ' ')
+                foreach (var dir in _neighbors)
+                    if (_game.Board[_targetPosition.Divide(Game1.TileSize) + dir.Value] == ' ')
+                        availableDirections.Add(dir.Key);
+
+                // This shouldn't happen, but better safe than sorry
+                if (availableDirections.Count == 0) return;
+
+                availableDirections = availableDirections.OrderBy(dir =>
                 {
-                    // Yes, I can! :) but should I change????
-                    List<Direction> availableDirections = new List<Direction>
-                    {
-                        _direction
-                    };
+                    float distP1 = Vector2.Distance((_targetPosition + _neighbors[dir].Multiply(Game1.TileSize)).ToVector2(), _game.Player1.PositionVec);
+                    float distP2 = Vector2.Distance((_targetPosition + _neighbors[dir].Multiply(Game1.TileSize)).ToVector2(), _game.Player2.PositionVec);
 
-                    if (_direction == Direction.Up || _direction == Direction.Down)
-                    {
-                        // Can I go left or right?
-                        if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(_neighbors[Direction.Left])] == ' ')
-                            availableDirections.Add(Direction.Left);
+                    return distP1 <= distP2 ? distP1 : distP2;
+                }).ToList();
 
-                        if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(_neighbors[Direction.Right])] == ' ')
-                            availableDirections.Add(Direction.Right);
-                    }
-                    else
-                    {
-                        // Can I go up or down?
-                        if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(_neighbors[Direction.Up])] == ' ')
-                            availableDirections.Add(Direction.Up);
-
-                        if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(_neighbors[Direction.Down])] == ' ')
-                            availableDirections.Add(Direction.Down);
-                    }
-
-                    if (_isRunningAway)
-                    {
-                        availableDirections = availableDirections.OrderBy(dir =>
-                        {
-                            float distP1 = Vector2.Distance(_targetPosition.Add(_neighbors[dir].Multiply(Game1.TileSize)).ToVector2(), _game.Player1.PositionVec);
-                            float distP2 = Vector2.Distance(_targetPosition.Add(_neighbors[dir].Multiply(Game1.TileSize)).ToVector2(), _game.Player2.PositionVec);
-
-                            return distP1 >= distP2 ? distP1 : distP2;
-                        }).ToList();
-
-                        _direction = availableDirections[0];
-                    }
-                    else
-                    {
-                        _direction = availableDirections[Game1.Rnd.Next(availableDirections.Count)];
-                    }
-                    
-                    _targetPosition = _targetPosition.Add(_neighbors[_direction].Multiply(Game1.TileSize));
+                if (!_isRunningAway)
+                {
+                    // Where's the closest player?!?! I'M GOING FOR HIM!!!
+                    _direction = availableDirections[0];
                 }
                 else
                 {
-                    // No :( Find another direction
-                    List<Direction> availableDirections = new List<Direction>();
-
-                    foreach (var dir in _neighbors)
-                        if (_game.Board[_targetPosition.Divide(Game1.TileSize).Add(dir.Value)] == ' ')
-                            availableDirections.Add(dir.Key);
-
-                    // This shouldn't happen, but better safe than sorry
-                    if (availableDirections.Count == 0) return;
-
-                    _direction = availableDirections[Game1.Rnd.Next(availableDirections.Count)];
-                    _targetPosition = _targetPosition.Add(_neighbors[_direction].Multiply(Game1.TileSize));
+                    // Ight imma head out
+                    _direction = availableDirections[availableDirections.Count - 1];
                 }
+                
+                _targetPosition = _targetPosition + _neighbors[_direction].Multiply(Game1.TileSize);
             }
             else
             {
@@ -210,7 +181,7 @@ namespace PacmanWars
                 Vector2 vec = _targetPosition.ToVector2() - _position.ToVector2();
                 vec.Normalize();
 
-                float speed = _isRunningAway ? _runAwaySpeed : _speed;
+                float speed = _isRunningAway ? RunAwaySpeed : NormalSpeed;
 
                 _position = (_position.ToVector2() + (vec * speed)).ToPoint();
 
@@ -264,10 +235,10 @@ namespace PacmanWars
         /// </summary>
         private void Die()
         {
-            _cooldown = _cooldownAfterDie;
+            _cooldown = CooldownAfterDie;
             _runAwayTimer = 0.0f;
             _position = _origin;
-            _targetPosition = _position.Add(new Point(0, -2).Multiply(Game1.TileSize));
+            _targetPosition = _position + new Point(0, -2).Multiply(Game1.TileSize);
         }
     }
 }
