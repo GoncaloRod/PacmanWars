@@ -22,7 +22,7 @@ namespace PacmanWars
         /// <param name="game">Reference to the game</param>
         public UI(Game1 game) : base(game)
         {
-            DrawOrder = 4;        // TODO: Change draw order
+            DrawOrder = 4;
 
             _game = game;
             _batch = game.SpriteBatch;
