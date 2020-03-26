@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace PacmanWars
@@ -16,6 +17,7 @@ namespace PacmanWars
 
         private Texture2D _spriteSheet;
         private Point _position;
+        private SoundEffect _pickUpSound;
         private bool _destroyNextFrame = false;
         
 
@@ -31,6 +33,7 @@ namespace PacmanWars
 
             _spriteSheet = game.SpriteSheet;
             _position = position;
+            _pickUpSound = game.Content.Load<SoundEffect>("pacman_chomp");
         }
 
         public override void Update(GameTime gameTime)
@@ -101,9 +104,7 @@ namespace PacmanWars
             );
 
             if (_destroyNextFrame)
-            {
-                // TODO: Play Power Pellet mode sound
-            }
+                _pickUpSound.Play();
 
             _batch.End();
         }
