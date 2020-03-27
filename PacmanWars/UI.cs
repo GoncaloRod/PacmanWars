@@ -61,7 +61,7 @@ namespace PacmanWars
             // Draw player 1 points
             string message = $"{_game.Player1.Score} points";
             Vector2 messageSize = _namco.MeasureString(message);
-            Vector2 messagePos = new Vector2(Game1.TileSize * (_game.Player1.Lives) + PointsTextOffset, _game.Board.Height * Game1.TileSize + (Game1.TileSize - messageSize.Y) / 2);
+            Vector2 messagePos = new Vector2(Game1.TileSize * (_game.Player1.Lives) + PointsTextOffset, _game.Board.Height * Game1.TileSize + (Game1.TileSize - messageSize.Y) / 2.0f);
 
             _batch.DrawString(_namco, message, messagePos, Color.White);
 
@@ -81,7 +81,7 @@ namespace PacmanWars
             // Draw player 2 points
             message = $"{_game.Player2.Score} points";
             messageSize = _namco.MeasureString(message);
-            messagePos = new Vector2((_game.Board.Width - _game.Player2.Lives) * Game1.TileSize - messageSize.X - PointsTextOffset, _game.Board.Height * Game1.TileSize + (Game1.TileSize - messageSize.Y) / 2);
+            messagePos = new Vector2((_game.Board.Width - _game.Player2.Lives) * Game1.TileSize - messageSize.X - PointsTextOffset, _game.Board.Height * Game1.TileSize + (Game1.TileSize - messageSize.Y) / 2.0f);
 
             _batch.DrawString(_namco, message, messagePos, Color.White);
 
@@ -95,6 +95,13 @@ namespace PacmanWars
                 if (gameTime.TotalGameTime.Seconds % 2 == 0)
                     _batch.DrawString(_namco, message, messagePos, Color.White);
             }
+
+            // High Score
+            message = (_game.Winner == null || _game.Winner?.Score <= _game.HighScore) ? $"high score: {_game.HighScore}" : "new high score!";
+            messageSize = _namco.MeasureString(message);
+            messagePos = new Vector2((_game.ScreenSize.X - messageSize.X) / 2.0f, _game.Board.Height * Game1.TileSize + (Game1.TileSize - messageSize.Y) / 2.0f);
+
+            _batch.DrawString(_namco, message, messagePos, Color.White);
 
             _batch.End();
         }
