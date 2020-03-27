@@ -121,6 +121,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\pacman_chomp.wav" />
+    <Content Include="Content\Pickup.wav" />
     <Content Include="Content\ss.png" />
     <Content Include="Content\tiles.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

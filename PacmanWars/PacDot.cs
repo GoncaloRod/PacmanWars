@@ -34,7 +34,14 @@ namespace PacmanWars
 
             _spriteSheet = game.SpriteSheet;
             _position = position;
-            _pickUpSound = game.Content.Load<SoundEffect>("pacman_chomp");
+            _pickUpSound = game.Content.Load<SoundEffect>("Pickup");
+        }
+
+        protected override void UnloadContent()
+        {
+            _pickUpSound.Dispose();
+
+            base.UnloadContent();
         }
 
         public override void Update(GameTime gameTime)

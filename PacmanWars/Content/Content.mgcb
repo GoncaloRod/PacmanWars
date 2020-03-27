@@ -20,11 +20,11 @@
 /processorParam:TextureFormat=Compressed
 /build:Namco.spritefont
 
-#begin pacman_chomp.wav
+#begin Pickup.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:pacman_chomp.wav
+/build:Pickup.wav
 
 #begin ss.png
 /importer:TextureImporter
