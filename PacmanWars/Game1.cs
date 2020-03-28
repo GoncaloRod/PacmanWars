@@ -375,5 +375,10 @@ namespace PacmanWars
         {
             File.WriteAllText($@"{Content.RootDirectory}\highscore.txt", newHighScore.ToString());
         }
+
+        private void SpawnFruit()
+        {
+
+        }
     }
 }
