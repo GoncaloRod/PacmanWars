@@ -37,6 +37,8 @@ namespace PacmanWars
             _pickUpSound = game.Content.Load<SoundEffect>("Pickup");
         }
 
+        public Point Position => _position;
+
         protected override void UnloadContent()
         {
             _pickUpSound.Dispose();

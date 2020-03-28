@@ -57,8 +57,11 @@ namespace PacmanWars
         private List<PacDot> _pacDots;
         private List<PowerPellet> _powerPellets;
         private List<Enemy> _enemies;
+        private List<Fruit> _fruits = new List<Fruit>();
         private Player _winner;
         private int _highScore;
+        private int fruitsSpawned = 0;
+        public bool isFruitSpawned = false;
 
         public Game1()
         {
@@ -110,6 +113,11 @@ namespace PacmanWars
         /// Get a list with game's enemies.
         /// </summary>
         public List<Enemy> Enemies => _enemies;
+
+        /// <summary>
+        /// Get a list with game's fruits.
+        /// </summary>
+        public List<Fruit> Fruits => _fruits;
 
         /// <summary>
         /// Get the game's winner.
@@ -196,6 +204,19 @@ namespace PacmanWars
             if (_pacDots.Count == 0 && _powerPellets.Count == 0)
             {
                 ReloadLevel();
+            }
+
+            if (Player1.Score > 1200 && Player1.Score > 1200 * fruitsSpawned && !isFruitSpawned && fruitsSpawned < 6)
+            {
+                SpawnFruit();
+                fruitsSpawned++;
+                isFruitSpawned = true;
+            }
+            else if (Player2.Score > 1200 && Player2.Score > 1200 * fruitsSpawned && !isFruitSpawned && fruitsSpawned < 6)
+            {
+                SpawnFruit();
+                fruitsSpawned++;
+                isFruitSpawned = true;
             }
 
             base.Update(gameTime);
@@ -376,9 +397,67 @@ namespace PacmanWars
             File.WriteAllText($@"{Content.RootDirectory}\highscore.txt", newHighScore.ToString());
         }
 
+        /// <summary>
+        /// Handles The Random Spawns of fruits when the player score is added 1200 points
+        /// </summary>
         private void SpawnFruit()
         {
+            int type, chance, index;
+            Point position;
+            PacDot dot;
+            List<Point> availablePositions = new List<Point>();
 
+            string[] file = File.ReadAllLines($@"{Content.RootDirectory}\board.txt");
+
+            int width = file[0].Length;
+            int height = file.Length;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    switch (file[y][x])
+                    {
+                        case ' ':
+                            availablePositions.Add(new Point(x, y));
+                            break;
+                    }
+                }
+            }
+
+            chance = Rnd.Next(0, 100);
+            if (chance <= 50)
+            {
+                type = 0;
+            }
+            else if (chance >= 51 && chance <= 75)
+            {
+                type = 1;
+            }
+            else if (chance >= 76 && chance <= 90)
+            {
+                type = 2;
+            }
+            else if (chance >= 91 && chance <= 98)
+            {
+                type = 3;
+            }
+            else 
+            {
+                type = 4;
+            }
+
+            index = Rnd.Next(availablePositions.Count);
+            position = availablePositions[index];
+
+            dot = PacDots.Where(p => p.Position == position).FirstOrDefault();
+
+            PacDots.Remove(dot);
+            Components.Remove(dot);
+
+            Fruit fruit = new Fruit(this, position, type);
+            Fruits.Add(fruit);
+            Components.Add(fruit);
         }
     }
 }

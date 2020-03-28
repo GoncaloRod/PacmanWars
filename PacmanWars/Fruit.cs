@@ -77,8 +77,6 @@ namespace PacmanWars
 
         public override void Update(GameTime gameTime)
         {
-            Rectangle fruitArea = new Rectangle(_position.Multiply(Game1.TileSize) + new Point((Game1.TileSize - _size) / 2), new Point(_size));
-
             if (_destroyNextFrame)
             {
                 _game.Fruits.Remove(this);
@@ -87,17 +85,26 @@ namespace PacmanWars
                 return;
             }
 
+            Rectangle fruitArea = new Rectangle(_position.Multiply(Game1.TileSize) + new Point((Game1.TileSize - _size) / 2), new Point(_size));
+
+            //Player 1 pick
             if (fruitArea.Intersects(_game.Player1.Area))
             {
-                _destroyNextFrame = true;
-
                 _game.Player1.AddPoints(_score);
-            }
-            else if (fruitArea.Intersects(_game.Player1.Area))
-            {
-                _destroyNextFrame = true;
 
+                _game.isFruitSpawned = false;
+
+                _destroyNextFrame = true;
+            }
+
+            //Inter
+            else if (fruitArea.Intersects(_game.Player2.Area))
+            {
                 _game.Player2.AddPoints(_score);
+
+                _game.isFruitSpawned = false;
+
+                _destroyNextFrame = true;
             }
         }
 
@@ -108,7 +115,7 @@ namespace PacmanWars
             _batch.Draw(
                 texture: _spriteSheet,
                 destinationRectangle: new Rectangle(_position.Multiply(Game1.TileSize), new Point(Game1.TileSize)),
-                sourceRectangle: new Rectangle((_fruitsType[_type] * 16).ToPoint(), new Point(1,1).Multiply(16)),
+                sourceRectangle: new Rectangle((_fruitsType[_type] * 16).ToPoint(), (Vector2.One * 16).ToPoint()),
                 color: Color.White
                 );
 
