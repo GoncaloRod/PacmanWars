@@ -57,8 +57,10 @@ namespace PacmanWars
         private List<PacDot> _pacDots;
         private List<PowerPellet> _powerPellets;
         private List<Enemy> _enemies;
+        private List<Fruit> _fruits = new List<Fruit>();
         private Player _winner;
         private int _highScore;
+        private int _fruitsSpawned = 0;
 
         public Game1()
         {
@@ -112,6 +114,11 @@ namespace PacmanWars
         public List<Enemy> Enemies => _enemies;
 
         /// <summary>
+        /// Get a list with game's fruits.
+        /// </summary>
+        public List<Fruit> Fruits => _fruits;
+
+        /// <summary>
         /// Get the game's winner.
         /// This will be null if there is no winner yet.
         /// </summary>
@@ -121,6 +128,11 @@ namespace PacmanWars
         /// Get current existing High Score.
         /// </summary>
         public int HighScore => _highScore;
+
+        /// <summary>
+        /// Tell if the fruit was spawned.
+        /// </summary>
+        public bool WasFruitSpawned { get; set; } = false;
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -196,6 +208,16 @@ namespace PacmanWars
             if (_pacDots.Count == 0 && _powerPellets.Count == 0)
             {
                 ReloadLevel();
+            }
+
+            bool availableToSpawnP1 = Player1.Score > 1200 && Player1.Score > 1200 * _fruitsSpawned && !WasFruitSpawned && _fruitsSpawned < 6;
+            bool availableToSpawnP2 = Player2.Score > 1200 && Player2.Score > 1200 * _fruitsSpawned && !WasFruitSpawned && _fruitsSpawned < 6;
+
+            if (availableToSpawnP1 || availableToSpawnP2)
+            {
+                SpawnFruit();
+                _fruitsSpawned++;
+                WasFruitSpawned = true;
             }
 
             base.Update(gameTime);
@@ -374,6 +396,70 @@ namespace PacmanWars
         private void SaveHighScore(int newHighScore)
         {
             File.WriteAllText($@"{Content.RootDirectory}\highscore.txt", newHighScore.ToString());
+        }
+
+        /// <summary>
+        /// Handles The Random Spawns of fruits when the player score is added 1200 points
+        /// </summary>
+        private void SpawnFruit()
+        {
+            int type;
+            List<Point> availablePositions = new List<Point>();
+
+            string[] file = File.ReadAllLines($@"{Content.RootDirectory}\board.txt");
+
+            int width = file[0].Length;
+            int height = file.Length;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    switch (file[y][x])
+                    {
+                        case ' ':
+                            availablePositions.Add(new Point(x, y));
+                            break;
+                    }
+                }
+            }
+
+            int chance = Rnd.Next(0, 100);
+            if (chance <= 50)
+            {
+                type = 0;
+            }
+            else if (chance <= 75)
+            {
+                type = 1;
+            }
+            else if (chance <= 90)
+            {
+                type = 2;
+            }
+            else if (chance <= 98)
+            {
+                type = 3;
+            }
+            else 
+            {
+                type = 4;
+            }
+
+            int index = Rnd.Next(availablePositions.Count);
+            Point position = availablePositions[index];
+
+            PacDot dot = PacDots.FirstOrDefault(p => p.Position == position);
+
+            if (dot != null)
+            {
+                PacDots.Remove(dot);
+                Components.Remove(dot);
+            }
+
+            Fruit fruit = new Fruit(this, position, type);
+            Fruits.Add(fruit);
+            Components.Add(fruit);
         }
     }
 }

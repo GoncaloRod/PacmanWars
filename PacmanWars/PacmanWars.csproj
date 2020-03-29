@@ -46,6 +46,7 @@
     <Compile Include="Board.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Fruit.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="PacDot.cs" />
     <Compile Include="Player.cs" />

@@ -21,7 +21,7 @@ namespace PacmanWars
         private bool _destroyNextFrame = false;
 
         /// <summary>
-        /// Creates an instance of PacDot.
+        /// Creates an instance of Pac-Dot.
         /// </summary>
         /// <param name="game">Reference to game</param>
         /// <param name="position">Position in cells of the Pac-Dot</param>
@@ -36,6 +36,11 @@ namespace PacmanWars
             _position = position;
             _pickUpSound = game.Content.Load<SoundEffect>("Pickup");
         }
+
+        /// <summary>
+        /// Get Pac-Dot position.
+        /// </summary>
+        public Point Position => _position;
 
         protected override void UnloadContent()
         {
