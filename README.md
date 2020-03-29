@@ -102,6 +102,12 @@ As Power Pellets apenas diferem das Pac-Dot num aspeto. Quando uma Power Pellet 
 
 ## Frutas Bonus
 
+No jogo existem 5 tipos diferentes de frutas: cereja(100 pontos), morango(300 pontos), laranja(500 pontos), maçã(700 pontos) e meloa(1000 pontos).
+
+A classe da fruta é responsável por atribuir os pontos dependendo da fruta _spawnada_ e por cuidar da interseção com os jogadores.
+ 
+Os diferentes tipos são decididos com uma variável _Random_ com diferentes percentagens para cada fruta sendo a cereja a mais comum e a meloa a mais rara.
+
 
 ## UI
 
