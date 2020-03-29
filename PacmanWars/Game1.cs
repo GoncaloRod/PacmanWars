@@ -60,8 +60,7 @@ namespace PacmanWars
         private List<Fruit> _fruits = new List<Fruit>();
         private Player _winner;
         private int _highScore;
-        private int fruitsSpawned = 0;
-        public bool isFruitSpawned = false;
+        private int _fruitsSpawned = 0;
 
         public Game1()
         {
@@ -129,6 +128,11 @@ namespace PacmanWars
         /// Get current existing High Score.
         /// </summary>
         public int HighScore => _highScore;
+
+        /// <summary>
+        /// Tell if the fruit was spawned.
+        /// </summary>
+        public bool WasFruitSpawned { get; set; } = false;
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -206,17 +210,14 @@ namespace PacmanWars
                 ReloadLevel();
             }
 
-            if (Player1.Score > 1200 && Player1.Score > 1200 * fruitsSpawned && !isFruitSpawned && fruitsSpawned < 6)
+            bool availableToSpawnP1 = Player1.Score > 1200 && Player1.Score > 1200 * _fruitsSpawned && !WasFruitSpawned && _fruitsSpawned < 6;
+            bool availableToSpawnP2 = Player2.Score > 1200 && Player2.Score > 1200 * _fruitsSpawned && !WasFruitSpawned && _fruitsSpawned < 6;
+
+            if (availableToSpawnP1 || availableToSpawnP2)
             {
                 SpawnFruit();
-                fruitsSpawned++;
-                isFruitSpawned = true;
-            }
-            else if (Player2.Score > 1200 && Player2.Score > 1200 * fruitsSpawned && !isFruitSpawned && fruitsSpawned < 6)
-            {
-                SpawnFruit();
-                fruitsSpawned++;
-                isFruitSpawned = true;
+                _fruitsSpawned++;
+                WasFruitSpawned = true;
             }
 
             base.Update(gameTime);
@@ -402,9 +403,7 @@ namespace PacmanWars
         /// </summary>
         private void SpawnFruit()
         {
-            int type, chance, index;
-            Point position;
-            PacDot dot;
+            int type;
             List<Point> availablePositions = new List<Point>();
 
             string[] file = File.ReadAllLines($@"{Content.RootDirectory}\board.txt");
@@ -425,20 +424,20 @@ namespace PacmanWars
                 }
             }
 
-            chance = Rnd.Next(0, 100);
+            int chance = Rnd.Next(0, 100);
             if (chance <= 50)
             {
                 type = 0;
             }
-            else if (chance >= 51 && chance <= 75)
+            else if (chance <= 75)
             {
                 type = 1;
             }
-            else if (chance >= 76 && chance <= 90)
+            else if (chance <= 90)
             {
                 type = 2;
             }
-            else if (chance >= 91 && chance <= 98)
+            else if (chance <= 98)
             {
                 type = 3;
             }
@@ -447,13 +446,16 @@ namespace PacmanWars
                 type = 4;
             }
 
-            index = Rnd.Next(availablePositions.Count);
-            position = availablePositions[index];
+            int index = Rnd.Next(availablePositions.Count);
+            Point position = availablePositions[index];
 
-            dot = PacDots.Where(p => p.Position == position).FirstOrDefault();
+            PacDot dot = PacDots.FirstOrDefault(p => p.Position == position);
 
-            PacDots.Remove(dot);
-            Components.Remove(dot);
+            if (dot != null)
+            {
+                PacDots.Remove(dot);
+                Components.Remove(dot);
+            }
 
             Fruit fruit = new Fruit(this, position, type);
             Fruits.Add(fruit);

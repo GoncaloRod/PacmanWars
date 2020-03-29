@@ -9,9 +9,12 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace PacmanWars
 {
+    /// <summary>
+    /// This represents a fruit and it's responsible for its intersections with players.
+    /// </summary>
     public class Fruit : DrawableGameComponent
     {
-        private const int _size = 12;
+        private const int Size = 12;
 
         private Game1 _game;
         private SpriteBatch _batch;
@@ -25,6 +28,12 @@ namespace PacmanWars
 
         private bool _destroyNextFrame = false;
 
+        /// <summary>
+        /// Instance of a fruit
+        /// </summary>
+        /// <param name="game">Reference to game.</param>
+        /// <param name="position">Position to spawn a fruit.</param>
+        /// <param name="type">Type of fruit to be spawned.</param>
         public Fruit(Game1 game,Point position, int type) : base(game)
         {
             DrawOrder = 0;
@@ -61,8 +70,6 @@ namespace PacmanWars
                 case 4:
                     _score = 1000;
                     break;
-                default:
-                    break;
             }
 
             _pickUpSound = game.Content.Load<SoundEffect>("Pickup");
@@ -85,14 +92,14 @@ namespace PacmanWars
                 return;
             }
 
-            Rectangle fruitArea = new Rectangle(_position.Multiply(Game1.TileSize) + new Point((Game1.TileSize - _size) / 2), new Point(_size));
+            Rectangle fruitArea = new Rectangle(_position.Multiply(Game1.TileSize) + new Point((Game1.TileSize - Size) / 2), new Point(Size));
 
             //Player 1 pick
             if (fruitArea.Intersects(_game.Player1.Area))
             {
                 _game.Player1.AddPoints(_score);
 
-                _game.isFruitSpawned = false;
+                _game.WasFruitSpawned = false;
 
                 _destroyNextFrame = true;
             }
@@ -102,7 +109,7 @@ namespace PacmanWars
             {
                 _game.Player2.AddPoints(_score);
 
-                _game.isFruitSpawned = false;
+                _game.WasFruitSpawned = false;
 
                 _destroyNextFrame = true;
             }
