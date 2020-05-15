@@ -4,7 +4,7 @@ Pacman Wars is a group project made for game dev class.
 
 The game is based on the original Pacman game, but introduces a second player. The main goal of the game is to catch as many points as possible to defeat the opponent player.
 
-This game was proudly made using MonoGame.
+This game was proudly made using [MonoGame](https://github.com/MonoGame/MonoGame).
 
 # Controls
 
